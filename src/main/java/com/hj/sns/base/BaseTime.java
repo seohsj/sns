@@ -1,4 +1,4 @@
-package com.hj.sns.domain;
+package com.hj.sns.base;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,9 +15,8 @@ import java.time.LocalDateTime;
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public abstract class BaseContentTime {
-    @Lob
-    private String content;
+public abstract class BaseTime {
+
 
     @CreatedDate
     private LocalDateTime createdDate;

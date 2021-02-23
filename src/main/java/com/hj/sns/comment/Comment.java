@@ -1,23 +1,31 @@
-package com.hj.sns.domain;
+package com.hj.sns.comment;
 
+import com.hj.sns.base.BaseTime;
 import com.hj.sns.photo.Photo;
 import com.hj.sns.user.model.User;
+import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
-public class Likes {
-
+@Getter
+public class Comment extends BaseTime {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="likes_id")
+    @Column(name="comment_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="USER_ID")
+    @JoinColumn(name="user_id")
     private User user;
 
+    @Lob
+    private String content;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="PHOTO_ID")
+    @JoinColumn(name="photo_id")
     private Photo photo;
+
+
 }
+

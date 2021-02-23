@@ -1,23 +1,23 @@
-package com.hj.sns.domain;
+package com.hj.sns.follow;
 
-import com.hj.sns.photo.Photo;
 import com.hj.sns.user.model.User;
+import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
-public class Likes {
-
+@Getter
+public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="likes_id")
+    @Column(name="follow_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="USER_ID")
-    private User user;
+    @JoinColumn(name="who_id")
+    private User who;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="PHOTO_ID")
-    private Photo photo;
+    @JoinColumn(name="whom_id")
+    private User whom;
 }
