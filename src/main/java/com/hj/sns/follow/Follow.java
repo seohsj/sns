@@ -10,14 +10,14 @@ import javax.persistence.*;
 public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="follow_id")
+    @Column(name = "follow_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="who_id")
+    @JoinColumn(name = "who_id")
     private User who;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="whom_id")
+    @JoinColumn(name = "whom_id")
     private User whom;
 }

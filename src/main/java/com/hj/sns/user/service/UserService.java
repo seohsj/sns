@@ -1,6 +1,7 @@
 package com.hj.sns.user.service;
 
 import com.hj.sns.user.exception.UserAlreadyExistException;
+import com.hj.sns.user.exception.UserNotFoundException;
 import com.hj.sns.user.model.User;
 import com.hj.sns.user.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,4 +30,10 @@ public class UserService {
             throw new UserAlreadyExistException("이미 존재하는 회원입니다.");
         });
     }
+
+    public User findUserById(Long id) {
+        Optional<User> user = userJpaRepository.findById(id);
+        return user.orElseThrow(() -> new UserNotFoundException("가입하지 않은 회원입니다."));
+    }
+
 }
