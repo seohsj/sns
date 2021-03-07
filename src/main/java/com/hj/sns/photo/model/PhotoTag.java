@@ -1,4 +1,4 @@
-package com.hj.sns.domain;
+package com.hj.sns.photo.model;
 
 import com.hj.sns.photo.model.Photo;
 import com.hj.sns.tag.model.Tag;

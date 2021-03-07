@@ -2,6 +2,7 @@ package com.hj.sns.photo.model;
 
 import com.hj.sns.tag.model.Tag;
 import com.hj.sns.user.model.User;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.net.UnknownServiceException;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PhotoTest {
 
     @Test
+    @DisplayName("Photo content에서 태그들을 추출한다.")
     void extractTags(){
 
         User user= new User("seo","afldks");

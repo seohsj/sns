@@ -6,10 +6,7 @@ import com.hj.sns.tag.repository.TagJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,15 +22,5 @@ public class TagService {
         }
     }
 
-   /* public List<Tag> extractTags(String content) {
-       return Arrays.stream(content.split("#"))
-                .filter(c -> c.startsWith("#"))
-                .map(c -> {
-                    int idx = c.indexOf(" ");
-                    return new Tag(c.substring(0, idx));
-                })
-                .collect(Collectors.toList());
-
-    }*/
 
 }

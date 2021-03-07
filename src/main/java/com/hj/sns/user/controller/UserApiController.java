@@ -30,7 +30,6 @@ public class UserApiController {
     @Data
     class UserJoinResponse {
         private Long id;
-
         UserJoinResponse(Long id) {
             this.id = id;
         }

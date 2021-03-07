@@ -3,6 +3,7 @@ package com.hj.sns.user.model;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -27,10 +28,16 @@ public class User {
         this.password = password;
     }
 
-//    public static User createUser(String username, String password){
-//        User user= new User();
-//        user.username = username;
-//        user.password = password;
-//        return user;
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(getUsername(), user.getUsername());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getUsername());
+    }
 }

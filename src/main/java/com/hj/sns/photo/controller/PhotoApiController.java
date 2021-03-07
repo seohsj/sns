@@ -1,23 +1,20 @@
 package com.hj.sns.photo.controller;
 
-import com.hj.sns.photo.model.Photo;
+import com.hj.sns.photo.model.dto.PhotoDto;
+import com.hj.sns.photo.model.dto.Result;
 import com.hj.sns.photo.service.PhotoService;
-import com.hj.sns.tag.model.Tag;
 import com.hj.sns.tag.service.TagService;
 import com.hj.sns.user.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,11 +25,27 @@ public class PhotoApiController {
 
     @PostMapping("/api/photos")
     public PhotoCreateResponse uploadPhoto(@RequestBody @Valid PhotoCreateRequest photoCreateRequest) {
-//        List<Tag> tags = photoCreateRequest.getTags().stream()
-//                .map(t -> new Tag(t.getName()))
-//                .collect(Collectors.toList());
         Long photoId = photoService.save(photoCreateRequest.getUserId(), photoCreateRequest.getImagePath(), photoCreateRequest.getContent());
         return new PhotoCreateResponse(photoId);
+    }
+
+    /*following photo+ 내 photo 순서대로 가져오기
+     * paging하기*/
+//    @GetMapping("/api/phtos")
+//    public Result<PhotoDto> getPhotos(@RequestBody @Valid PhotoRequest photoRequest) {
+//
+//
+//    }
+
+
+    //  @GetMapping("/api/photos/{userName}")
+    //특정유저포스팅 조회
+//여기서 userName이 자신인 경우 사진 수정등하기
+    @Data
+    static class PhotoRequest {
+        @NotEmpty
+        private String userId;
+
     }
 
 
@@ -42,13 +55,13 @@ public class PhotoApiController {
         private Long userId;
         private String imagePath;
         private String content;
-      //  private List<TagCreateDto> tags = new ArrayList<>();
+        //  private List<TagCreateDto> tags = new ArrayList<>();
 
     }
 
     @Data
     static class TagCreateDto {
-        @NotNull
+        @NotEmpty
         private String name;
     }
 

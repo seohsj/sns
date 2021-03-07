@@ -33,9 +33,18 @@ class TagServiceTest {
         tags.add(tag);
         tags.add(tag2);
         tagService.saveTags(tags);
+
+        Tag tag3 = new Tag("tag3");
+        Tag tag4 = new Tag("tag4");
+        List<Tag> tags2 = new ArrayList<>();
+        tags2.add(tag3);
+        tags2.add(tag4);
+        tagService.saveTags(tags2);
+        assertThat(tagJpaRepository.findAll().size()).isEqualTo(4);
         assertThat(tag).isEqualTo(tagJpaRepository.findById(tag.getId()).get());
         assertThat(tag2).isEqualTo(tagJpaRepository.findById(tag2.getId()).get());
-
+        assertThat(tag3).isEqualTo(tagJpaRepository.findById(tag3.getId()).get());
+        assertThat(tag4).isEqualTo(tagJpaRepository.findById(tag4.getId()).get());
 
     }
 
@@ -63,6 +72,7 @@ class TagServiceTest {
         Tag tag2_2 = new Tag("tag2");
         List<Tag> anotherTags = new ArrayList<>();
         anotherTags.add(tag2_2);
+        tagService.saveTags(anotherTags);
 
 
         assertThat(tagJpaRepository.findAll().size()).isEqualTo(2);

@@ -20,4 +20,15 @@ public class Follow {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "whom_id")
     private User whom;
+    protected Follow(){}
+
+
+    public Follow(User who,User whom){
+        this.who=who;
+        this.whom=whom;
+    }
+
+
+
+
 }
