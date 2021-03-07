@@ -1,4 +1,4 @@
-package com.hj.sns.domain;
+package com.hj.sns.common;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.EntityListeners;
-import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
@@ -15,9 +14,8 @@ import java.time.LocalDateTime;
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
-public abstract class BaseContentTime {
-    @Lob
-    private String content;
+public abstract class BaseTime {
+
 
     @CreatedDate
     private LocalDateTime createdDate;
