@@ -1,20 +1,23 @@
 package com.hj.sns.photo.controller;
 
-import com.hj.sns.photo.model.dto.PhotoDto;
-import com.hj.sns.photo.model.dto.Result;
+
 import com.hj.sns.photo.service.PhotoService;
 import com.hj.sns.tag.service.TagService;
 import com.hj.sns.user.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+/*
+* TODO: paging하기
+*/
+
 
 @RestController
 @RequiredArgsConstructor

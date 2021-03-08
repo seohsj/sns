@@ -1,13 +1,11 @@
 package com.hj.sns.photo.service;
 
 import com.hj.sns.follow.Follow;
-import com.hj.sns.follow.repository.FollowJpaRepository;
+import com.hj.sns.follow.FollowJpaRepository;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.photo.model.PhotoTest;
 import com.hj.sns.photo.model.dto.PhotoDto;
 import com.hj.sns.photo.model.dto.Result;
 import com.hj.sns.photo.repository.PhotoJpaRepository;
-import com.hj.sns.tag.repository.TagJpaRepository;
 import com.hj.sns.user.model.User;
 import com.hj.sns.user.repository.UserJpaRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -34,13 +32,6 @@ class PhotoServiceTest {
     private FollowJpaRepository followJpaRepository;
     @Autowired
     private PhotoJpaRepository photoJpaRepository;
-//    public Long save(Long userId, String imagePath, String content, List<Tag> tags){
-//        User user= userRepository.findById(userId).get();
-//        Photo photo = new Photo(user, imagePath, content, tags);
-//        photoRepository.save(photo);
-//        return photo.getId();
-//    }
-
 
     @Test
     @DisplayName("photo를 저장한다.")
@@ -105,9 +96,9 @@ class PhotoServiceTest {
 
         List<String> tags = new ArrayList<>();
         for (PhotoDto photo : result.getData()) {
-            photo.getTags().forEach(t -> {
-                tags.add(t.getName());
-            });
+            photo.getTags().forEach(t ->
+                tags.add(t.getName())
+            );
         }
         assertThat(tags.size()).isEqualTo(7);
 

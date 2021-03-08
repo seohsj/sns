@@ -1,9 +1,9 @@
 package com.hj.sns.follow.repository;
 
 import com.hj.sns.follow.Follow;
+import com.hj.sns.follow.FollowJpaRepository;
 import com.hj.sns.user.model.User;
 import com.hj.sns.user.repository.UserJpaRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -19,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @Transactional
 class FollowRepositoryTest {
-    @Autowired
-    private FollowRepository followRepository;
+
     @Autowired
     private FollowJpaRepository followJpaRepository;
 
@@ -47,24 +45,22 @@ class FollowRepositoryTest {
         follow(user2, user6);
         follow(user3, user7);
 
-
-        List<User> followings = followRepository.findFollowings(user1.getId());
-        List<User> followings2 = followRepository.findFollowings(user2.getId());
-        List<User> followings3 = followRepository.findFollowings(user3.getId());
-
-
+        List<Follow> followings = followJpaRepository.findFollowings(user1.getId());
+        List<Follow> followings2 = followJpaRepository.findFollowings(user2.getId());
+        List<Follow> followings3 = followJpaRepository.findFollowings(user3.getId());
         assertThat(followings.size()).isEqualTo(4);
         assertTrue(followings.stream().allMatch(f -> (
-                f.equals(user2) || f.equals(user3) || f.equals(user4) || f.equals(user5)
+                f.getWhom().equals(user2) || f.getWhom().equals(user3) || f.getWhom().equals(user4) || f.getWhom().equals(user5)
         )));
 
         assertThat(followings2.size()).isEqualTo(3);
         assertTrue(followings2.stream().allMatch(f -> (
-                f.equals(user3) || f.equals(user4) || f.equals(user6)
+                f.getWhom().equals(user3) || f.getWhom().equals(user4) || f.getWhom().equals(user6)
         )));
 
         assertThat(followings3.size()).isEqualTo(1);
-        assertThat(followings3.get(0)).isEqualTo(user7);
+        assertThat(followings3.get(0).getWhom()).isEqualTo(user7);
+
     }
 
     private void follow(User who, User whom) {
