@@ -2,8 +2,6 @@ package com.hj.sns.photo.service;
 
 import com.hj.sns.follow.FollowService;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.photo.model.dto.PhotoDto;
-import com.hj.sns.photo.model.dto.Result;
 import com.hj.sns.photo.repository.PhotoJpaRepository;
 import com.hj.sns.photo.repository.PhotoRepository;
 import com.hj.sns.tag.model.Tag;
@@ -13,8 +11,6 @@ import com.hj.sns.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +24,8 @@ public class PhotoService {
     private final UserService userService;
     private final TagService tagService;
 
-
+/*ToDo: 완성하기*/
+    
     @Transactional
     public Long save(Long userId, String imagePath, String content) {
         User user = userService.findUserById(userId);
@@ -41,21 +38,26 @@ public class PhotoService {
     }
 
 
-    public Result<List<PhotoDto>> findAllPhotosOfFollowing(Long userId) {
+//    public Result<List<PhotoDto>> findAllPhotosOfFollowing(Long userId) {
+//
+//        List<User> followings = followService.findFollowings(userId);
+//        List<Long> ids = toFollowingsIds(followings);
+//        List<Photo> photoList = findPhotosWithUserIds(ids);
+//
+//        List<PhotoDto> photos = new ArrayList<>();
+//        photoList.forEach(p ->
+//            photos.add(new PhotoDto(p))
+//        );
+//
+//        return new Result<>(photos);
+//}
+
+    public List<Photo> findAllPhotosOfFollowing(Long userId) {
 
         List<User> followings = followService.findFollowings(userId);
         List<Long> ids = toFollowingsIds(followings);
-        List<Photo> photoList = findPhotosWithUserIds(ids);
-
-        List<PhotoDto> photos = new ArrayList<>();
-        photoList.forEach(p ->
-            photos.add(new PhotoDto(p))
-        );
-
-        return new Result<>(photos);
-}
-
-
+        return findPhotosWithUserIds(ids);
+    }
     public List<Photo> findPhotosWithUserIds(List<Long> userIds) {
         return photoQueryRepository.findPhotoWithUserIds(userIds);
     }

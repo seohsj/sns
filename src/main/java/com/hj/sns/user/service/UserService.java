@@ -24,16 +24,19 @@ public class UserService {
         return user.getId();
     }
 
-    private void validateDuplicateUserName(String name) {
-        Optional<User> user = userJpaRepository.findByUsername(name);
-        user.ifPresent(e -> {
-            throw new UserAlreadyExistException("이미 존재하는 회원입니다.");
-        });
-    }
 
     public User findUserById(Long id) {
         Optional<User> user = userJpaRepository.findById(id);
-        return user.orElseThrow(() -> new UserNotFoundException("가입하지 않은 회원입니다."));
+        return user.orElseThrow(UserNotFoundException::new);
     }
+
+
+    private void validateDuplicateUserName(String name) {
+        Optional<User> user = userJpaRepository.findByUsername(name);
+        user.ifPresent(e -> {
+            throw new UserAlreadyExistException();
+        });
+    }
+
 
 }

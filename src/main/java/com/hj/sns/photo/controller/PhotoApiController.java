@@ -37,19 +37,22 @@ public class PhotoApiController {
 //    @GetMapping("/api/phtos")
 //    public Result<PhotoDto> getPhotos(@RequestBody @Valid PhotoRequest photoRequest) {
 //
-//
+//        List<PhotoDto> photos = new ArrayList<>();
+//        photoList.forEach(p ->
+//                photos.add(new PhotoDto(p))
+//        );
 //    }
 
 
     //  @GetMapping("/api/photos/{userName}")
     //특정유저포스팅 조회
 //여기서 userName이 자신인 경우 사진 수정등하기
-    @Data
-    static class PhotoRequest {
-        @NotEmpty
-        private String userId;
-
-    }
+//    @Data
+//    static class PhotoRequest {
+//        @NotNull
+//        private Long userId;
+//
+//    }
 
 
     @Data
@@ -73,6 +76,13 @@ public class PhotoApiController {
     class PhotoCreateResponse {
         private Long photoId;
     }
+    @Data
+    class Result<T> {
+        private T data;
 
+        public Result(T data) {
+            this.data = data;
+        }
+    }
 
 }
