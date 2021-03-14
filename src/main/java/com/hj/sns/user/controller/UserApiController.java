@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -27,21 +29,9 @@ public class UserApiController {
     }
 
 
-//    @GetMapping("/api/users/{username}")
-//    public UserSearchResponse findUserById(@PathVariable String username) {
-//        return userService.findUserById(userId);
-//    }
-////
-//    @ExceptionHandler
-//    public ResponseEntity<ErrorResponse> handleUserNotFoundEx(UserNotFoundException ex) {
-//        return new ResponseEntity<>(ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), ex.getMessage())
-//                , HttpStatus.BAD_REQUEST);
-//
-//    }
-
 
     @Data
-    class UserJoinResponse {
+    static class UserJoinResponse {
         private Long id;
 
         UserJoinResponse(Long id) {
@@ -62,8 +52,18 @@ public class UserApiController {
 
     }
 
-//    class UserSearchResponse {
-//        private String username;
-//        private String
-//    }
+    @Data
+    static class UserSearchResponse {
+        private String username;
+        private List<PhotoSummaryDto> photos=new ArrayList<>();
+
+    }
+
+    @Data
+    static class PhotoSummaryDto{
+        private Long photoId;
+        private String imagePath;
+
+    }
+
 }

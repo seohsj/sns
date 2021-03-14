@@ -61,7 +61,6 @@ public class PhotoApiController {
         private Long userId;
         private String imagePath;
         private String content;
-        //  private List<TagCreateDto> tags = new ArrayList<>();
 
     }
 
@@ -73,11 +72,11 @@ public class PhotoApiController {
 
     @Data
     @AllArgsConstructor
-    class PhotoCreateResponse {
+    static class PhotoCreateResponse {
         private Long photoId;
     }
     @Data
-    class Result<T> {
+    static class Result<T> {
         private T data;
 
         public Result(T data) {

@@ -64,7 +64,7 @@ class FollowServiceTest {
 
         followService.follow(user1.getId(), user2.getId());
 
-        assertTrue(followJpaRepository.findByWhoAndWhom(user1, user2).isPresent());
+        assertTrue(followJpaRepository.findByWho_IdAndWhom_Id(user1.getId(), user2.getId()).isPresent());
 
     }
 

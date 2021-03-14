@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 @Data
 public class PhotoDto {
+    private Long photoId;
     private Long userId;
     private String username;
     private String imagePath;
@@ -18,6 +19,7 @@ public class PhotoDto {
     private List<TagDto> tags;
     private List<CommentDto> comments;
     public PhotoDto(Photo p){
+        photoId=p.getId();
         userId=p.getUser().getId();
         username=p.getUser().getUsername();
         imagePath=p.getImagePath();

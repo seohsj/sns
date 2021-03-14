@@ -5,7 +5,6 @@ import com.hj.sns.user.exception.UserNotFoundException;
 import com.hj.sns.user.model.User;
 import com.hj.sns.user.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +25,13 @@ public class UserService {
 
 
     public User findUserById(Long id) {
-        Optional<User> user = userJpaRepository.findById(id);
-        return user.orElseThrow(UserNotFoundException::new);
+        return userJpaRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    public User findUserByName(String username){
+        return userJpaRepository.findByUsername(username)
+                .orElseThrow(UserNotFoundException::new);
     }
 
 
