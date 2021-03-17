@@ -3,7 +3,7 @@ package com.hj.sns.photo.model;
 import com.hj.sns.common.BaseTime;
 import com.hj.sns.comment.model.Comment;
 import com.hj.sns.tag.model.Tag;
-import com.hj.sns.user.model.User;
+import com.hj.sns.user.User;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -20,7 +20,6 @@ public class Photo extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "photo_id")
     private Long id;
-
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,29 +42,22 @@ public class Photo extends BaseTime {
     private List<Comment> comments = new ArrayList<>();
 
 
+    private static final Pattern pattern= Pattern.compile("#([0-9a-zA-Z가-힣]+)");
+
     public Photo(User user, String imagePath, String content) {
         this.user = user;
         this.imagePath = imagePath;
         this.content = content;
     }
 
-
-
- /*   public Photo(User user, String imagePath, String content, List<Tag> tags) {
-        this.user = user;
-        this.imagePath = imagePath;
-        this.content = content;
-        addPhotoTags(tags);
-    }*/
-
-
     protected Photo() {
     }
 
     public List<Tag> extractTags() {
         List<Tag> tags = new ArrayList<>();
-        String regx = "\\#([0-9a-zA-Z가-힣]+)";
-        Pattern pattern = Pattern.compile(regx);
+       // String regx = "#([0-9a-zA-Z가-힣]+)";
+
+//        Pattern pattern = Pattern.compile(regx);
         Matcher matcher= pattern.matcher(content);
         while (matcher.find()) {
             tags.add(new Tag(matcher.group().substring(1)));
@@ -81,4 +73,6 @@ public class Photo extends BaseTime {
 
         }
     }
+
+
 }

@@ -1,16 +1,11 @@
 package com.hj.sns.photo.model;
 
 import com.hj.sns.tag.model.Tag;
-import com.hj.sns.user.model.User;
+import com.hj.sns.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.net.UnknownServiceException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

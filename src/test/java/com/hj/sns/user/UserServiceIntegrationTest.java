@@ -1,9 +1,10 @@
-package com.hj.sns.user.service;
+package com.hj.sns.user;
 
+import com.hj.sns.user.UserService;
 import com.hj.sns.user.exception.UserAlreadyExistException;
 import com.hj.sns.user.exception.UserNotFoundException;
-import com.hj.sns.user.model.User;
-import com.hj.sns.user.repository.UserJpaRepository;
+import com.hj.sns.user.User;
+import com.hj.sns.user.UserJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class UserServiceTest {
+class UserServiceIntegrationTest {
     @Autowired
     private UserService userService;
 
@@ -25,7 +26,8 @@ class UserServiceTest {
     @Test
     @DisplayName("회원을 저장한다.")
     void save() {
-        User user = newUser("userA","password");
+        User user = new User("userA","password");
+        userService.save(user);
         assertThat(user).isEqualTo(userJpaRepository.findById(user.getId()).get());
 
 
@@ -53,11 +55,6 @@ class UserServiceTest {
 
     }
 
-    private User newUser(String username, String password) {
-        User user1 =  new User(username, password);
-        userService.save(user1);
-        return user1;
-    }
 
     @Test
     @DisplayName("해당 id를 가진 회원이 존재하지 않을 경우 예외가 발생한다")

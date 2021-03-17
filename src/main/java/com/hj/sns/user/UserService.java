@@ -1,11 +1,8 @@
-package com.hj.sns.user.service;
+package com.hj.sns.user;
 
 import com.hj.sns.user.exception.UserAlreadyExistException;
 import com.hj.sns.user.exception.UserNotFoundException;
-import com.hj.sns.user.model.User;
-import com.hj.sns.user.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,16 +21,24 @@ public class UserService {
         return user.getId();
     }
 
+
+    public User findUserById(Long id) {
+        return userJpaRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+    public User findUserByName(String username){
+        return userJpaRepository.findByUsername(username)
+                .orElseThrow(UserNotFoundException::new);
+    }
+
+
     private void validateDuplicateUserName(String name) {
         Optional<User> user = userJpaRepository.findByUsername(name);
         user.ifPresent(e -> {
-            throw new UserAlreadyExistException("이미 존재하는 회원입니다.");
+            throw new UserAlreadyExistException();
         });
     }
 
-    public User findUserById(Long id) {
-        Optional<User> user = userJpaRepository.findById(id);
-        return user.orElseThrow(() -> new UserNotFoundException("가입하지 않은 회원입니다."));
-    }
 
 }

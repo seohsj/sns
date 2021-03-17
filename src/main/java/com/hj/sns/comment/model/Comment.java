@@ -2,7 +2,7 @@ package com.hj.sns.comment.model;
 
 import com.hj.sns.common.BaseTime;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.user.model.User;
+import com.hj.sns.user.User;
 import lombok.Getter;
 
 import javax.persistence.*;

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-public class PhotoQueryRepository {
+public class PhotoRepository {
     private final EntityManager em;
 
     public List<Photo> findPhotoWithUserIds(List<Long> userIds) {

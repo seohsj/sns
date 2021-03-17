@@ -1,20 +1,23 @@
 package com.hj.sns.photo.controller;
 
-import com.hj.sns.photo.model.dto.PhotoDto;
-import com.hj.sns.photo.model.dto.Result;
+
 import com.hj.sns.photo.service.PhotoService;
 import com.hj.sns.tag.service.TagService;
-import com.hj.sns.user.service.UserService;
+import com.hj.sns.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+/*
+* TODO: paging하기
+*/
+
 
 @RestController
 @RequiredArgsConstructor
@@ -34,19 +37,22 @@ public class PhotoApiController {
 //    @GetMapping("/api/phtos")
 //    public Result<PhotoDto> getPhotos(@RequestBody @Valid PhotoRequest photoRequest) {
 //
-//
+//        List<PhotoDto> photos = new ArrayList<>();
+//        photoList.forEach(p ->
+//                photos.add(new PhotoDto(p))
+//        );
 //    }
 
 
     //  @GetMapping("/api/photos/{userName}")
     //특정유저포스팅 조회
 //여기서 userName이 자신인 경우 사진 수정등하기
-    @Data
-    static class PhotoRequest {
-        @NotEmpty
-        private String userId;
-
-    }
+//    @Data
+//    static class PhotoRequest {
+//        @NotNull
+//        private Long userId;
+//
+//    }
 
 
     @Data
@@ -55,7 +61,6 @@ public class PhotoApiController {
         private Long userId;
         private String imagePath;
         private String content;
-        //  private List<TagCreateDto> tags = new ArrayList<>();
 
     }
 
@@ -67,9 +72,16 @@ public class PhotoApiController {
 
     @Data
     @AllArgsConstructor
-    class PhotoCreateResponse {
+    static class PhotoCreateResponse {
         private Long photoId;
     }
+    @Data
+    static class Result<T> {
+        private T data;
 
+        public Result(T data) {
+            this.data = data;
+        }
+    }
 
 }

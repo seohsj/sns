@@ -1,4 +1,4 @@
-package com.hj.sns.user.model;
+package com.hj.sns.user;
 
 import lombok.Getter;
 
@@ -7,11 +7,13 @@ import java.util.Objects;
 
 @Entity
 @Getter
+@Table(uniqueConstraints = {@UniqueConstraint( name = "NAME_UNIQUE",
+        columnNames = {"USERNAME"} )})
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
+    @Column(name = "user_id")
     private Long id;
 
     @Column(nullable = false)
