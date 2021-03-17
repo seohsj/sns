@@ -1,9 +1,7 @@
-package com.hj.sns.user.controller;
+package com.hj.sns.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hj.sns.exception.GlobalExceptionHandler;
-import com.hj.sns.user.model.User;
-import com.hj.sns.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

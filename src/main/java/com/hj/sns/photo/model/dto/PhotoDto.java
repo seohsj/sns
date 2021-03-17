@@ -1,7 +1,6 @@
 package com.hj.sns.photo.model.dto;
 
 import com.hj.sns.comment.model.dto.CommentDto;
-import com.hj.sns.photo.controller.PhotoApiController;
 import com.hj.sns.photo.model.Photo;
 import com.hj.sns.tag.model.dto.TagDto;
 import lombok.Data;

@@ -4,15 +4,11 @@ import com.hj.sns.follow.FollowService;
 import com.hj.sns.photo.repository.PhotoJpaRepository;
 import com.hj.sns.photo.repository.PhotoRepository;
 import com.hj.sns.tag.service.TagService;
-import com.hj.sns.user.model.User;
-import com.hj.sns.user.service.UserService;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.hj.sns.user.UserService;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import static org.mockito.Mockito.when;
 
 /*TODO: 완성하기*/
 

@@ -1,7 +1,5 @@
-package com.hj.sns.user.controller;
+package com.hj.sns.user;
 
-import com.hj.sns.user.model.User;
-import com.hj.sns.user.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,9 +1,7 @@
-package com.hj.sns.user.service;
+package com.hj.sns.user;
 
 import com.hj.sns.user.exception.UserAlreadyExistException;
 import com.hj.sns.user.exception.UserNotFoundException;
-import com.hj.sns.user.model.User;
-import com.hj.sns.user.repository.UserJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

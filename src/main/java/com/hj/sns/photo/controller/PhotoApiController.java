@@ -3,7 +3,7 @@ package com.hj.sns.photo.controller;
 
 import com.hj.sns.photo.service.PhotoService;
 import com.hj.sns.tag.service.TagService;
-import com.hj.sns.user.service.UserService;
+import com.hj.sns.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

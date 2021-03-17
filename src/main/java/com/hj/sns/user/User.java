@@ -1,4 +1,4 @@
-package com.hj.sns.user.model;
+package com.hj.sns.user;
 
 import lombok.Getter;
 

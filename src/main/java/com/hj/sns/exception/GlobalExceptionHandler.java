@@ -1,6 +1,7 @@
 package com.hj.sns.exception;
 
 import com.hj.sns.follow.exception.FollowAlreadyExistException;
+import com.hj.sns.follow.exception.FollowNotFoundException;
 import com.hj.sns.user.exception.UserAlreadyExistException;
 import com.hj.sns.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -30,5 +31,10 @@ public class GlobalExceptionHandler {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(FollowNotFoundException.class)
+    public ErrorResponse followNotFoundException(FollowNotFoundException e) {
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
 
 }

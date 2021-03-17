@@ -1,9 +1,10 @@
-package com.hj.sns.user.service;
+package com.hj.sns.user;
 
+import com.hj.sns.user.UserService;
 import com.hj.sns.user.exception.UserAlreadyExistException;
 import com.hj.sns.user.exception.UserNotFoundException;
-import com.hj.sns.user.model.User;
-import com.hj.sns.user.repository.UserJpaRepository;
+import com.hj.sns.user.User;
+import com.hj.sns.user.UserJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
