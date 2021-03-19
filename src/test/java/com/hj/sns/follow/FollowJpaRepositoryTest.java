@@ -1,6 +1,5 @@
 package com.hj.sns.follow;
 
-import com.hj.sns.follow.dto.FollowingDto;
 import com.hj.sns.user.User;
 import com.hj.sns.user.UserJpaRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +35,7 @@ class FollowJpaRepositoryTest {
 
     @Test
     @DisplayName("팔로잉한 사람들의 목록을 찾는다")
-    void findFollowByWho_Id() {
+    void findFollowByWho() {
         HashMap<String, User> map = saveUsers(7);
         follow(map.get("user1"), map.get("user2"));
         follow(map.get("user1"), map.get("user3"));
@@ -48,9 +46,9 @@ class FollowJpaRepositoryTest {
         follow(map.get("user2"), map.get("user6"));
         follow(map.get("user3"), map.get("user7"));
 
-        List<Follow> followings = followJpaRepository.findFollowByWho_Id(map.get("user1").getId());
-        List<Follow> followings2 = followJpaRepository.findFollowByWho_Id(map.get("user2").getId());
-        List<Follow> followings3 = followJpaRepository.findFollowByWho_Id(map.get("user3").getId());
+        List<Follow> followings = followJpaRepository.findFollowByWho(map.get("user1"));
+        List<Follow> followings2 = followJpaRepository.findFollowByWho(map.get("user2"));
+        List<Follow> followings3 = followJpaRepository.findFollowByWho(map.get("user3"));
         assertThat(followings.size()).isEqualTo(4);
         assertTrue(followings.stream().allMatch(f -> (
                 f.getWhom().equals(map.get("user2")) ||
@@ -81,7 +79,8 @@ class FollowJpaRepositoryTest {
         follow(map.get("user5"), map.get("user1"));
         follow(map.get("user1"), map.get("user5"));
 
-        Slice<Follow> followers = followJpaRepository.pagingFindByWhom(map.get("user1").getId(),
+
+        Slice<Follow> followers = followJpaRepository.pagingFindByWhom(map.get("user1"),
                 PageRequest.of(1, 2));
         assertThat(followers.getContent().size()).isEqualTo(2);
         assertTrue(followers.getContent().stream().allMatch(f -> (
@@ -106,8 +105,9 @@ class FollowJpaRepositoryTest {
         follow(map.get("user1"), map.get("user5"));
 
 
-        Slice<Follow> followings = followJpaRepository.pagingFindByWho(map.get("user1").getId(),
+        Slice<Follow> followings = followJpaRepository.pagingFindByWho(map.get("user1"),
                 PageRequest.of(1, 2));
+
 
         assertThat(followings.getContent().size()).isEqualTo(2);
         assertTrue(followings.getContent().stream().allMatch(f -> (
@@ -123,20 +123,26 @@ class FollowJpaRepositoryTest {
 
     @Test
     @DisplayName("follower와 following id로 Follow를 조회한다")
-    void findByWho_IdAndWhom_Id() {
+    void findByWhoAndWhom() {
 
-        HashMap<String, User> map = saveUsers(3);
+        HashMap<String, User> map = saveUsers(4);
         follow(map.get("user1"), map.get("user2"));
         follow(map.get("user2"), map.get("user1"));
+        follow(map.get("user1"), map.get("user4"));
         //       em.flush();
         //     em.clear();
-        Optional<Follow> follow = followJpaRepository.findByWho_IdAndWhom_Id(map.get("user1").getId(), map.get("user2").getId());
+
+        Optional<Follow> follow = followJpaRepository.findByWhoAndWhom(map.get("user1"), map.get("user2"));
         assertTrue(follow.isPresent());
-        Optional<Follow> follow2 = followJpaRepository.findByWho_IdAndWhom_Id(map.get("user2").getId(), map.get("user1").getId());
+        Optional<Follow> follow2 = followJpaRepository.findByWhoAndWhom(map.get("user2"), map.get("user1"));
         assertTrue(follow2.isPresent());
-        Optional<Follow> follow3 = followJpaRepository.findByWho_IdAndWhom_Id(map.get("user3").getId(), map.get("user1").getId());
+        Optional<Follow> follow3 = followJpaRepository.findByWhoAndWhom(map.get("user3"), map.get("user1"));
         assertTrue(follow3.isEmpty());
+        Optional<Follow> follow4 = followJpaRepository.findByWhoAndWhom(map.get("user1"), map.get("user4"));
+        assertTrue(follow4.isPresent());
+
     }
+
 
     private HashMap<String, User> saveUsers(int userNum) {
         HashMap<String, User> map = new HashMap<>();

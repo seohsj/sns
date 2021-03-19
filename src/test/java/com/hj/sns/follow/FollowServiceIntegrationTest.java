@@ -1,5 +1,6 @@
 package com.hj.sns.follow;
 
+import com.hj.sns.follow.dto.FollowerDto;
 import com.hj.sns.follow.dto.FollowingDto;
 import com.hj.sns.follow.exception.FollowAlreadyExistException;
 
@@ -63,7 +64,7 @@ class FollowServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("userId의 팔로잉 목록을 조회 및 페이징 한다.")
+    @DisplayName("user의 팔로잉 목록을 조회 및 페이징 한다.")
     void findFollowingsPaging() {
         HashMap<String, User> map = saveUsers(5);
 
@@ -91,6 +92,29 @@ class FollowServiceIntegrationTest {
 
 
     @Test
+    @DisplayName("user의 팔로잉 목록을 조회 및 페이징 한다")
+    void findFollowersPaging(){
+        HashMap<String, User> map = saveUsers(3);
+
+        follow(map.get("user1"), map.get("user2"));
+        follow(map.get("user3"), map.get("user2"));
+        Slice<FollowerDto> followers = followService.findFollowerPaging(map.get("user2").getUsername(),
+                PageRequest.of(0, 20));
+        assertThat(followers.getContent().size()).isEqualTo(2);
+        assertTrue(followers.getContent().stream().allMatch(f -> (
+                f.getUsername().equals(map.get("user1").getUsername()) ||
+                        f.getUsername().equals(map.get("user3").getUsername()))
+        ));
+        assertThat(followers.getNumber()).isEqualTo(0);
+        assertFalse(followers.hasNext());
+
+
+
+
+    }
+
+
+    @Test
     @DisplayName("follow를 한다.")
     void follow() {
         User user1 = saveUser("seo", "fldlskeifk");
@@ -98,7 +122,7 @@ class FollowServiceIntegrationTest {
 
         followService.follow(user1.getUsername(), user2.getUsername());
 
-        assertTrue(followJpaRepository.findByWho_IdAndWhom_Id(user1.getId(), user2.getId()).isPresent());
+        assertTrue(followJpaRepository.findByWhoAndWhom(user1, user2).isPresent());
 
     }
 
@@ -123,7 +147,7 @@ class FollowServiceIntegrationTest {
         followJpaRepository.save(new Follow(user1, user2));
         followService.unfollow(user1.getUsername(), user2.getUsername());
 
-        assertTrue(followJpaRepository.findByWho_IdAndWhom_Id(user1.getId(), user2.getId()).isEmpty());
+        assertTrue(followJpaRepository.findByWhoAndWhom(user1, user2).isEmpty());
 
     }
 
