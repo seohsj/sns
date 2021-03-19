@@ -15,21 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface PhotoJpaRepository extends JpaRepository<Photo, Long> {
-//
-    @EntityGraph(attributePaths = {"user"})
     Slice<Photo> findPhotoByUser(User user , Pageable pageable);
 
-
-    @EntityGraph(attributePaths = {"user"})
-    List<Photo> findTestPhotoByUser(User user);
-//        select p from Photo p join fetch p.user
-//
-
-//    @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL)
-//    private List<PhotoTag> photoTags = new ArrayList<>();
-//
-//
-//    @OneToMany(mappedBy = "photo")
-//    private List<Comment> comments = new ArrayList<>();
 
 }

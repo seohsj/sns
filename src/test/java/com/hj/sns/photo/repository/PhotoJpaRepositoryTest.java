@@ -35,11 +35,8 @@ class PhotoJpaRepositoryTest {
 
 
         Slice<Photo> photo = photoJpaRepository.findPhotoByUser(user, PageRequest.of(0,20));
-
         assertThat(photo.getContent().size()).isEqualTo(3);
-        for (Photo p : photo.getContent()) {
-            System.out.println(p.getContent());
-        }
+
 
     }
 

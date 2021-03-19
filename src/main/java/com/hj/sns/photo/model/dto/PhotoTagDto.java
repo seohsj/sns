@@ -1,0 +1,13 @@
+package com.hj.sns.photo.model.dto;
+
+import com.hj.sns.photo.model.PhotoTag;
+import lombok.Data;
+
+@Data
+public class PhotoTagDto {
+    String tagName;
+
+    public PhotoTagDto(PhotoTag photoTag){
+        tagName=photoTag.getTag().getName();
+    }
+}
