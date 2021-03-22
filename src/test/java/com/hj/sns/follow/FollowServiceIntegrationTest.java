@@ -51,8 +51,8 @@ class FollowServiceIntegrationTest {
         follow(user2, user1);
 
 
-        List<User> followings = followService.findFollowings(user1.getId());
-        List<User> followings2 = followService.findFollowings(user2.getId());
+        List<User> followings = followService.findFollowings(user1);
+        List<User> followings2 = followService.findFollowings(user2);
 
 
         assertThat(followings.size()).isEqualTo(4);
@@ -62,6 +62,7 @@ class FollowServiceIntegrationTest {
 
 
     }
+
 
     @Test
     @DisplayName("user의 팔로잉 목록을 조회 및 페이징 한다.")

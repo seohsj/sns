@@ -32,7 +32,7 @@ public class FollowServiceTest {
 //    }
 
     @Test
-    void findFollowings(){
+    void findFollowings() {
 //        List<Follow> followList = new ArrayList<>();
 //        followList.add(new Follow(new User("userA", "password"), new User("userB", "password")));
 //        followList.add(new Follow(new User("userA", "password"), new User("userC", "password")));
