@@ -34,7 +34,7 @@ class FollowJpaRepositoryTest {
     //EntityManager em;
 
     @Test
-    @DisplayName("팔로잉한 사람들의 목록을 찾는다")
+    @DisplayName("팔로잉 목록을 찾는다")
     void findFollowByWho() {
         HashMap<String, User> map = saveUsers(7);
         follow(map.get("user1"), map.get("user2"));
@@ -66,6 +66,38 @@ class FollowJpaRepositoryTest {
 
         assertThat(followings3.size()).isEqualTo(1);
         assertThat(followings3.get(0).getWhom()).isEqualTo(map.get("user7"));
+
+    }
+    @Test
+    @DisplayName("팔로워 목록을 찾는다")
+    void findFollowByWhom() {
+        HashMap<String, User> map = saveUsers(6);
+        follow(map.get("user2"), map.get("user1"));
+        follow(map.get("user3"), map.get("user1"));
+        follow(map.get("user4"), map.get("user1"));
+        follow(map.get("user5"), map.get("user2"));
+        follow(map.get("user6"), map.get("user2"));
+        follow(map.get("user2"), map.get("user4"));
+
+
+        List<Follow> followers = followJpaRepository.findFollowByWhom(map.get("user1"));
+        List<Follow> followers2 = followJpaRepository.findFollowByWhom(map.get("user2"));
+        List<Follow> followers3 = followJpaRepository.findFollowByWhom(map.get("user4"));
+        assertThat(followers.size()).isEqualTo(3);
+        assertTrue(followers.stream().allMatch(f -> (
+                f.getWho().equals(map.get("user2")) ||
+                        f.getWho().equals(map.get("user3")) ||
+                        f.getWho().equals(map.get("user4"))
+        )));
+
+        assertThat(followers2.size()).isEqualTo(2);
+        assertTrue(followers2.stream().allMatch(f -> (
+                f.getWho().equals(map.get("user5")) ||
+                        f.getWho().equals(map.get("user6"))
+        )));
+
+        assertThat(followers3.size()).isEqualTo(1);
+        assertThat(followers3.get(0).getWho()).isEqualTo(map.get("user2"));
 
     }
 

@@ -25,11 +25,11 @@ public class FollowService {
     private final FollowJpaRepository followJpaRepository;
     private final UserService userService;
 
-    public List<User> findFollowings(Long userId) {
-        User user = userService.findUserById(userId);
+    public List<User> findFollowings(User user) {
         List<Follow> followings=followJpaRepository.findFollowByWho(user);
         return followings.stream().map(f -> f.getWhom()).collect(Collectors.toList());
     }
+
 
     public Slice<FollowingDto> findFollowingsPaging(String username, Pageable pageable) {
         User user = userService.findUserByName(username);
@@ -64,7 +64,7 @@ public class FollowService {
         User who = userService.findUserByName(whoName);
         User whom = userService.findUserByName(whomName);
         Follow follow = followJpaRepository.findByWhoAndWhom(who, whom)
-                .orElseThrow(() -> new FollowNotFoundException());
+                .orElseThrow(FollowNotFoundException::new);
         followJpaRepository.delete(follow);
     }
 

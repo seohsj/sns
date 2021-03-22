@@ -34,7 +34,7 @@ public class Photo extends BaseTime {
     private String content;
 
 
-    @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "photo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PhotoTag> photoTags = new ArrayList<>();
 
 
@@ -42,7 +42,7 @@ public class Photo extends BaseTime {
     private List<Comment> comments = new ArrayList<>();
 
 
-    private static final Pattern pattern= Pattern.compile("#([0-9a-zA-Z가-힣]+)");
+    private static final Pattern pattern = Pattern.compile("#([0-9a-zA-Z가-힣]+)");
 
     public Photo(User user, String imagePath, String content) {
         this.user = user;
@@ -55,10 +55,7 @@ public class Photo extends BaseTime {
 
     public List<Tag> extractTags() {
         List<Tag> tags = new ArrayList<>();
-       // String regx = "#([0-9a-zA-Z가-힣]+)";
-
-//        Pattern pattern = Pattern.compile(regx);
-        Matcher matcher= pattern.matcher(content);
+        Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
             tags.add(new Tag(matcher.group().substring(1)));
             if (matcher.group() == null) break;
@@ -72,6 +69,23 @@ public class Photo extends BaseTime {
             this.photoTags.add(photoTag);
 
         }
+    }
+    public void updatePhotoTags(List<Tag> tags) {
+        photoTags.clear();
+        for (Tag tag : tags) {
+            PhotoTag photoTag = new PhotoTag(this, tag);
+            this.photoTags.add(photoTag);
+
+        }
+    }
+
+    public void updateImagePath(String imagePath) {
+        this.imagePath = imagePath;
+
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
     }
 
 

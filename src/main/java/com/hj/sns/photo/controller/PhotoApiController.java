@@ -1,6 +1,7 @@
 package com.hj.sns.photo.controller;
 
 import com.hj.sns.photo.model.dto.PhotoDto;
+import com.hj.sns.photo.model.dto.PhotoFeedDto;
 import com.hj.sns.photo.service.PhotoService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,11 +15,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.data.domain.Pageable;
 
-/*
-* TODO: paging하기
-*/
-
-
 @RestController
 @RequiredArgsConstructor
 public class PhotoApiController {
@@ -31,10 +27,26 @@ public class PhotoApiController {
         return new PhotoCreateResponse(photoId);
     }
 
+    @PatchMapping("/api/photos/{photoId}")
+    public PhotoUpdateResponse updatePhoto(@PathVariable("photoId") Long photoId,@RequestBody @Valid PhotoUpdateRequest photoUpdateRequest) {
+        photoService.updatePhoto(photoId, photoUpdateRequest.getImagePath(), photoUpdateRequest.getContent());
+        return new PhotoUpdateResponse(photoId);
+    }
+
     @GetMapping("/api/photos/{username}")
     public Slice<PhotoDto> findPhotos(@PathVariable("username") String username, Pageable pageable){
         return photoService.findPhotoByUser(username, pageable);
     }
+
+    @GetMapping("/api/feeds/{username}")
+    public Slice<PhotoFeedDto> getUserFeed(@PathVariable("username") String username, Pageable pageable){
+        return  photoService.getUserFeed(username, pageable);
+    }
+
+    
+//    //session이용해서바꾸기
+//    @GetMapping("/api/photos")
+//    public Slice<>
 
 
 
@@ -56,6 +68,21 @@ public class PhotoApiController {
     @Data
     @AllArgsConstructor
     static class PhotoCreateResponse {
+        private Long photoId;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    static class PhotoUpdateRequest{
+        private String imagePath;
+        private String content;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class PhotoUpdateResponse{
         private Long photoId;
     }
 
