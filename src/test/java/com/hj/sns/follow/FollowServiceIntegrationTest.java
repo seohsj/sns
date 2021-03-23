@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +33,8 @@ class FollowServiceIntegrationTest {
     private FollowJpaRepository followJpaRepository;
     @Autowired
     private UserJpaRepository userJpaRepository;
-
+    @Autowired
+    private EntityManager em;
 
     @Test
     @DisplayName("userId의 팔로잉 목록을 조회한다.")
@@ -50,6 +52,8 @@ class FollowServiceIntegrationTest {
         follow(user2, user4);
         follow(user2, user1);
 
+        em.flush();
+        em.clear();
 
         List<User> followings = followService.findFollowings(user1);
         List<User> followings2 = followService.findFollowings(user2);
@@ -94,7 +98,7 @@ class FollowServiceIntegrationTest {
 
     @Test
     @DisplayName("user의 팔로잉 목록을 조회 및 페이징 한다")
-    void findFollowersPaging(){
+    void findFollowersPaging() {
         HashMap<String, User> map = saveUsers(3);
 
         follow(map.get("user1"), map.get("user2"));
@@ -108,8 +112,6 @@ class FollowServiceIntegrationTest {
         ));
         assertThat(followers.getNumber()).isEqualTo(0);
         assertFalse(followers.hasNext());
-
-
 
 
     }

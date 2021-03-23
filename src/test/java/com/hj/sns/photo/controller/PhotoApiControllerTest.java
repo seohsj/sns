@@ -70,9 +70,7 @@ class PhotoApiControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(pr2))
         ).andExpect(status().isCreated());
-
     }
-
 
     @Test
     @DisplayName("사진 업데이트")
@@ -87,6 +85,16 @@ class PhotoApiControllerTest {
                 .content(objectMapper.writeValueAsString(pr)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.photoId").value(id));
+    }
+
+    @Test
+    @DisplayName("사진 삭제")
+    void deletePhoto() throws Exception{
+        User user = new User("userA", "password");
+        userJpaRepository.save(user);
+        Long id = photoService.save(user.getId(), "imagePath", "content#content");
+        mockMvc.perform(delete("/api/photos/" + id))
+                .andExpect(jsonPath("$.deleted").value("true"));
     }
 
     //comment 추가
@@ -113,7 +121,9 @@ class PhotoApiControllerTest {
                 .andExpect(jsonPath("$.content[1].tags[1].tagName").value("cde"))
                 .andExpect(jsonPath("$.content[2].imagePath").value("imagePath"))
                 .andExpect(jsonPath("$.content[2].content").value("content#content"))
-                .andExpect(jsonPath("$.content[2].tags[0].tagName").value("content"));
+                .andExpect(jsonPath("$.content[2].tags[0].tagName").value("content"))
+                .andExpect(status().isOk())
+        ;
     }
 
     @Test
@@ -141,7 +151,9 @@ class PhotoApiControllerTest {
                 .andExpect(jsonPath("$.content[3].tags[0].tagName").value("new"))
                 .andExpect(jsonPath("$.content[4].username").value("userB"))
                 .andExpect(jsonPath("$.content[4].tags[0].tagName").value("content"))
+                .andExpect(status().isOk())
                 .andDo(print());
 
     }
+
 }

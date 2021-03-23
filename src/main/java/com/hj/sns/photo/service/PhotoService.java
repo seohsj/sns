@@ -39,7 +39,9 @@ public class PhotoService {
         List<Tag> collect = tags.stream().map(
                 tag -> tagJpaRepository.findByName(
                         tag.getName()).orElseGet(() -> tagJpaRepository.save(tag)
-                )).collect(Collectors.toList());
+                ))
+                .distinct()
+                .collect(Collectors.toList());
 
         photo.addPhotoTags(collect);
         photoJpaRepository.save(photo);
@@ -90,5 +92,11 @@ public class PhotoService {
         }
         return photo.getId();
 
+    }
+
+    @Transactional
+    public void deletePhoto(Long photoId) {
+        Photo photo = findPhotoById(photoId);
+        photoJpaRepository.delete(photo);
     }
 }

@@ -38,7 +38,7 @@ public class Photo extends BaseTime {
     private List<PhotoTag> photoTags = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "photo")
+    @OneToMany(mappedBy = "photo", cascade= CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
 
