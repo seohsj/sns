@@ -33,8 +33,6 @@ class FollowApiControllerTest {
 
     @Autowired
     private UserJpaRepository userJpaRepository;
-    @Autowired
-    private FollowJpaRepository followJpaRepository;
 
     private MockMvc mockMvc;
 

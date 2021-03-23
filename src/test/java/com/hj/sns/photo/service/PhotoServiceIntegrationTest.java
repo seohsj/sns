@@ -1,6 +1,10 @@
 package com.hj.sns.photo.service;
 
+import com.hj.sns.comment.CommentJpaRepository;
+import com.hj.sns.comment.CommentService;
+import com.hj.sns.comment.model.Comment;
 import com.hj.sns.follow.FollowService;
+import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.photo.model.Photo;
 import com.hj.sns.photo.model.dto.PhotoDto;
 import com.hj.sns.photo.model.dto.PhotoFeedDto;
@@ -21,8 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -38,6 +41,9 @@ class PhotoServiceIntegrationTest {
     private PhotoJpaRepository photoJpaRepository;
     @Autowired
     private FollowService followService;
+    @Autowired
+    private CommentService commentService;
+@Autowired private CommentJpaRepository commentJpaRepository;
     @Autowired
     private EntityManager em;
 
@@ -76,7 +82,7 @@ class PhotoServiceIntegrationTest {
                         pt.getTag().getName().equals("tag1") || pt.getTag().getName().equals("tag2")
                 )));
 
-        assertThat(findPhoto3.getPhotoTags().size()).isEqualTo(4);
+        assertThat(findPhoto3.getPhotoTags().size()).isEqualTo(3);
         assertThat(findPhoto3.getUser().getId()).isEqualTo(user.getId());
         assertThat(findPhoto3.getImagePath()).isEqualTo("imagePath1");
         assertTrue(findPhoto3.getPhotoTags().stream()
@@ -137,10 +143,16 @@ class PhotoServiceIntegrationTest {
     @DisplayName("user가 업로드한 사진을 페이징으로 조회한다")
     void findPhotoByUser() {
         User user = new User("userA", "password");
+        User user2 = new User("userB", "password");
         userJpaRepository.save(user);
-        photoService.save(user.getId(), "imagePath", "content #content");
+        userJpaRepository.save(user2);
+        Long id1 = photoService.save(user.getId(), "imagePath", "content #content");
         photoService.save(user.getId(), "imagePath", "#hi#photo");
         photoService.save(user.getId(), "imagePath", "#content");
+        commentService.writeComment(id1, user2.getId(), "comment");
+        commentService.writeComment(id1, user2.getId(), "comment2");
+        commentService.writeComment(id1, user.getId(), "comment3");
+
         em.flush();
         em.clear();
         Slice<PhotoDto> photoByUser = photoService.findPhotoByUser(user.getUsername(), PageRequest.of(0, 20));
@@ -152,6 +164,10 @@ class PhotoServiceIntegrationTest {
             assertTrue(p.getTags().stream().allMatch(t -> (t.getTagName().equals("content") || t.getTagName().equals("hi") || t.getTagName().equals("photo"))));
 
         }
+        for(PhotoDto p: photoByUser.getContent()){
+            int size = p.getComments().size();
+            assertTrue(size==3||size==0);
+        }
     }
 
     @Test
@@ -160,7 +176,7 @@ class PhotoServiceIntegrationTest {
         User user1 = userJpaRepository.save(new User("userA", "password"));
         User user2 = userJpaRepository.save(new User("userB", "password"));
         User user3 = userJpaRepository.save(new User("userC", "password"));
-        photoService.save(user1.getId(), "imagePath", "#userA가 업로드한 사진1");
+        Long id1 = photoService.save(user1.getId(), "imagePath", "#userA가 업로드한 사진1");
         photoService.save(user1.getId(), "imagePath", "userA가 업로드한 사진2");
         photoService.save(user2.getId(), "imagePath", "userB 업로드한 사진");
         photoService.save(user3.getId(), "imagePath", "userC가 업로드한 사진1");
@@ -181,11 +197,16 @@ class PhotoServiceIntegrationTest {
         followService.follow(user1.getUsername(), user3.getUsername());
         em.flush();
         em.clear();
+        commentService.writeComment(id1, user2.getId(), "comment");
+        commentService.writeComment(id1, user2.getId(), "comment2");
+        em.flush();
+        em.clear();
         Slice<PhotoFeedDto> photos2 = photoService.getUserFeed(user1.getUsername(), PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "id")));
+
         assertThat(photos2.getContent().size()).isEqualTo(5);
         assertThat(photos2.getContent().get(0).getUsername()).isEqualTo(user3.getUsername());
 
-
+        assertThat(photos2.getContent().get(4).getComments().size()).isEqualTo(2);
         followService.unfollow(user1.getUsername(), user2.getUsername());
         em.flush();
         em.clear();
@@ -202,4 +223,20 @@ class PhotoServiceIntegrationTest {
 
     }
 
+    @Test
+    @DisplayName("photo를 삭제한다.")
+    void deletePhoto() {
+        User user1 = userJpaRepository.save(new User("userA", "password"));
+        User user2 = userJpaRepository.save(new User("userB", "password"));
+        Long id = photoService.save(user1.getId(), "imagePath", "#userA가 업로드한 사진1");
+
+        Long commentId = commentService.writeComment(id, user2.getId(), "comment");
+        Long commentId2 = commentService.writeComment(id, user2.getId(), "comment2");
+        em.flush();
+        em.clear();
+        photoService.deletePhoto(id);
+        assertThrows(PhotoNotFoundException.class, ()->photoService.findPhotoById(id));
+        assertTrue(commentJpaRepository.findById(commentId).isEmpty());
+        assertTrue(commentJpaRepository.findById(commentId2).isEmpty());
+    }
 }

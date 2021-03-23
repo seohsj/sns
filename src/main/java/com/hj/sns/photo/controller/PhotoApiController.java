@@ -33,6 +33,12 @@ public class PhotoApiController {
         return new PhotoUpdateResponse(photoId);
     }
 
+    @DeleteMapping("/api/photos/{photoId}")
+    public PhotoDeleteResponse deletePhoto(@PathVariable("photoId") Long photoId){
+        photoService.deletePhoto(photoId);
+        return new PhotoDeleteResponse(true);
+    }
+
     @GetMapping("/api/photos/{username}")
     public Slice<PhotoDto> findPhotos(@PathVariable("username") String username, Pageable pageable){
         return photoService.findPhotoByUser(username, pageable);
@@ -43,14 +49,6 @@ public class PhotoApiController {
         return  photoService.getUserFeed(username, pageable);
     }
 
-    
-//    //session이용해서바꾸기
-//    @GetMapping("/api/photos")
-//    public Slice<>
-
-
-
-
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -60,9 +58,6 @@ public class PhotoApiController {
         @NotNull
         private String imagePath;
         private String content;
-
-
-
     }
 
     @Data
@@ -84,6 +79,12 @@ public class PhotoApiController {
     @AllArgsConstructor
     static class PhotoUpdateResponse{
         private Long photoId;
+    }
+    @Data
+    @AllArgsConstructor
+    static class PhotoDeleteResponse{
+        private boolean deleted;
+
     }
 
 }
