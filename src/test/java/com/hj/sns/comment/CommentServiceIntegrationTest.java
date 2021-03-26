@@ -36,20 +36,16 @@ class CommentServiceIntegrationTest {
     @Test
     @DisplayName("댓글 작성")
     void writeComment() {
-        User user = new User("UserA", "password");
-        User user2 = new User("UserB", "password");
-        userJpaRepository.save(user);
-        userJpaRepository.save(user2);
 
-        Long id = photoService.save(user.getId(), "imagePath", "photo");
+        Long id = photoService.save(1L, "imagePath", "photo");
 
         em.flush();
         em.clear();
-        commentService.writeComment(id, user.getId(), "comment");
-        commentService.writeComment(id, user2.getId(), "comment");
+        commentService.writeComment(id, 1L, "comment");
+        commentService.writeComment(id, 2L, "comment");
         List<Comment> comments = photoService.findPhotoById(id).getComments();
         assertThat(comments.size()).isEqualTo(2);
-        assertTrue(comments.stream().allMatch(c -> (c.getUser().equals(user) || c.getUser().equals(user2))));
+        assertTrue(comments.stream().allMatch(c -> (c.getUser().getId().equals(1L) || c.getUser().getId().equals(2L))));
     }
 
 }

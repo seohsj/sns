@@ -25,11 +25,7 @@ public class FollowServiceTest {
     @Mock
     UserService userService;
 
-//    @Test
-//    void findFollowingsPaging() {
-//        when(userService.findUserByName("userA")).thenReturn(new User("userA", "password"));
-//
-//    }
+
 
     @Test
     void findFollowings() {

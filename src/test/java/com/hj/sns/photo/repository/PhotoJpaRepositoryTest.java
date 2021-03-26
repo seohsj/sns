@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,12 +33,8 @@ class PhotoJpaRepositoryTest {
     @Test
     @DisplayName("user가 업로드한 사진을 페이징으로 조회한다")
     void findPhotoByUser() {
-        User user = userJpaRepository.save(new User("userA", "password"));
-        photoJpaRepository.save(new Photo(user, "imagePath", "userA가 업로드한 사진"));
-        photoJpaRepository.save(new Photo(user, "imagePath", "userA가 업로드한 사진"));
-        photoJpaRepository.save(new Photo(user, "imagePath", "userA가 업로드한 사진"));
 
-
+        User user = userJpaRepository.findByUsername("userA").orElse(null);
         Slice<Photo> photo = photoJpaRepository.findPhotoByUser(user, PageRequest.of(0, 20));
         assertThat(photo.getContent().size()).isEqualTo(3);
 
@@ -49,23 +44,20 @@ class PhotoJpaRepositoryTest {
     @Test
     @DisplayName("user, followings 의 사진을 페이징으로 조회 ")
     void findFeedByUser() {
-        User user1 = userJpaRepository.save(new User("userA", "password"));
-        User user2 = userJpaRepository.save(new User("userB", "password"));
-        User user3 = userJpaRepository.save(new User("userC", "password"));
-        photoJpaRepository.save(new Photo(user1, "imagePath", "userA가 업로드한 사진1"));
-        photoJpaRepository.save(new Photo(user1, "imagePath", "userA가 업로드한 사진2"));
-        photoJpaRepository.save(new Photo(user2, "imagePath", "userB 업로드한 사진"));
-        photoJpaRepository.save(new Photo(user3, "imagePath", "userC가 업로드한 사진1"));
-        photoJpaRepository.save(new Photo(user3, "imagePath", "userC가 #업로드한 사진2"));
+
+        User userA = userJpaRepository.findByUsername("userA").orElseGet(null);
+        User userB = userJpaRepository.findByUsername("userB").orElseGet(null);
+        User userC = userJpaRepository.findByUsername("userC").orElseGet(null);
+
         em.flush();
         em.clear();
         System.out.println("TEST -------------------------------");
         List<Long> ids = new ArrayList<>();
-        ids.add(user1.getId());
-        ids.add(user2.getId());
-        ids.add(user3.getId());
-        Slice<Photo> photos = photoJpaRepository.findFeedByUser(ids, PageRequest.of(0, 5, Sort.by((Sort.Direction.DESC), "user.username")));
-        assertThat(photos.getContent().size()).isEqualTo(5);
+        ids.add(userA.getId());
+        ids.add(userB.getId());
+        ids.add(userC.getId());
+        Slice<Photo> photos = photoJpaRepository.findFeedByUser(ids, PageRequest.of(0, 20, Sort.by((Sort.Direction.DESC), "user.username")));
+        assertThat(photos.getContent().size()).isEqualTo(6);
         assertThat(photos.getContent().get(0).getUser().getUsername()).isEqualTo("userC");
         assertFalse(photos.hasNext());
 

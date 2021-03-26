@@ -39,18 +39,9 @@ class FollowServiceIntegrationTest {
     @Test
     @DisplayName("userId의 팔로잉 목록을 조회한다.")
     void findFollowings() {
-        User user1 = saveUser("seo", "fldlskeifk");
-        User user2 = saveUser("kim", "abcd");
-        User user3 = saveUser("lee", "fdsfeas");
-        User user4 = saveUser("choi", "mkmkl");
-        User user5 = saveUser("park", "basee");
-        follow(user1, user2);
-        follow(user1, user3);
-        follow(user1, user4);
-        follow(user1, user5);
-        follow(user2, user3);
-        follow(user2, user4);
-        follow(user2, user1);
+        User user1 = userJpaRepository.findByUsername("userA").orElse(null);
+        User user2 = userJpaRepository.findByUsername("userB").orElse(null);
+
 
         em.flush();
         em.clear();
@@ -60,9 +51,9 @@ class FollowServiceIntegrationTest {
 
 
         assertThat(followings.size()).isEqualTo(4);
-        assertTrue(followings.stream().allMatch(f -> (f.equals(user2) || f.equals(user3) || f.equals(user4) || f.equals(user5))));
+        assertTrue(followings.stream().allMatch(f -> (f.getUsername().equals("userB") || f.getUsername().equals("userC") || f.getUsername().equals("userD") || f.getUsername().equals("userE"))));
         assertThat(followings2.size()).isEqualTo(3);
-        assertTrue(followings2.stream().allMatch(f -> (f.equals(user3) || f.equals(user4) || f.equals(user1))));
+        assertTrue(followings2.stream().allMatch(f -> (f.getUsername().equals("userA") || f.getUsername().equals("userC") || f.getUsername().equals("userD"))));
 
 
     }
@@ -71,23 +62,17 @@ class FollowServiceIntegrationTest {
     @Test
     @DisplayName("user의 팔로잉 목록을 조회 및 페이징 한다.")
     void findFollowingsPaging() {
-        HashMap<String, User> map = saveUsers(5);
-
-        follow(map.get("user1"), map.get("user2"));
-        follow(map.get("user1"), map.get("user3"));
-        follow(map.get("user1"), map.get("user4"));
-        follow(map.get("user1"), map.get("user5"));
 
 
-        Slice<FollowingDto> followings = followService.findFollowingsPaging(map.get("user1").getUsername(),
+        Slice<FollowingDto> followings = followService.findFollowingsPaging("userA",
                 PageRequest.of(0, 20));
 
         assertThat(followings.getContent().size()).isEqualTo(4);
         assertTrue(followings.getContent().stream().allMatch(f -> (
-                f.getUsername().equals(map.get("user2").getUsername()) ||
-                        f.getUsername().equals(map.get("user3").getUsername()) ||
-                        f.getUsername().equals(map.get("user4").getUsername()) ||
-                        f.getUsername().equals(map.get("user5").getUsername()))
+                f.getUsername().equals("userB") ||
+                        f.getUsername().equals("userC") ||
+                        f.getUsername().equals("userD") ||
+                        f.getUsername().equals("userE"))
         ));
         assertThat(followings.getNumber()).isEqualTo(0);
         assertFalse(followings.hasNext());
@@ -97,18 +82,15 @@ class FollowServiceIntegrationTest {
 
 
     @Test
-    @DisplayName("user의 팔로잉 목록을 조회 및 페이징 한다")
+    @DisplayName("user의 팔로워 목록을 조회 및 페이징 한다")
     void findFollowersPaging() {
-        HashMap<String, User> map = saveUsers(3);
 
-        follow(map.get("user1"), map.get("user2"));
-        follow(map.get("user3"), map.get("user2"));
-        Slice<FollowerDto> followers = followService.findFollowerPaging(map.get("user2").getUsername(),
+        Slice<FollowerDto> followers = followService.findFollowerPaging("userC",
                 PageRequest.of(0, 20));
         assertThat(followers.getContent().size()).isEqualTo(2);
         assertTrue(followers.getContent().stream().allMatch(f -> (
-                f.getUsername().equals(map.get("user1").getUsername()) ||
-                        f.getUsername().equals(map.get("user3").getUsername()))
+                f.getUsername().equals("userA") ||
+                        f.getUsername().equals("userB"))
         ));
         assertThat(followers.getNumber()).isEqualTo(0);
         assertFalse(followers.hasNext());
@@ -120,24 +102,22 @@ class FollowServiceIntegrationTest {
     @Test
     @DisplayName("follow를 한다.")
     void follow() {
-        User user1 = saveUser("seo", "fldlskeifk");
-        User user2 = saveUser("kim", "abcd");
+        User userA = userJpaRepository.findByUsername("userA").orElse(null);
+        User userG = userJpaRepository.findByUsername("userG").orElse(null);
+        followService.follow(userA.getUsername(), userG.getUsername());
 
-        followService.follow(user1.getUsername(), user2.getUsername());
-
-        assertTrue(followJpaRepository.findByWhoAndWhom(user1, user2).isPresent());
+        assertTrue(followJpaRepository.findByWhoAndWhom(userA, userG).isPresent());
 
     }
 
     @Test
     @DisplayName("이미 follow한 상태에서 follow 시 실패한다.")
     void followFail() {
-        User user1 = saveUser("seo", "fldlskeifk");
-        User user2 = saveUser("kim", "abcd");
 
-        followService.follow(user1.getUsername(), user2.getUsername());
+        User userA = userJpaRepository.findByUsername("userA").orElse(null);
+        User userB = userJpaRepository.findByUsername("userB").orElse(null);
         assertThrows(FollowAlreadyExistException.class,
-                () -> followService.follow(user1.getUsername(), user2.getUsername())
+                () -> followService.follow(userA.getUsername(), userB.getUsername())
         );
     }
 
@@ -145,45 +125,36 @@ class FollowServiceIntegrationTest {
     @Test
     @DisplayName("unfollow를 한다.")
     void unfollow() {
-        User user1 = saveUser("seo", "fldlskeifk");
-        User user2 = saveUser("kim", "abcd");
-        followJpaRepository.save(new Follow(user1, user2));
-        followService.unfollow(user1.getUsername(), user2.getUsername());
+        User userA = userJpaRepository.findByUsername("userA").orElse(null);
+        User userB = userJpaRepository.findByUsername("userB").orElse(null);
+        followService.unfollow(userA.getUsername(), userB.getUsername());
 
-        assertTrue(followJpaRepository.findByWhoAndWhom(user1, user2).isEmpty());
+        assertTrue(followJpaRepository.findByWhoAndWhom(userA, userB).isEmpty());
 
     }
 
     @Test
     @DisplayName("follow가 아닌 상태에서 unfollow를 하면 예외를 던진다.")
     void unfollowFail() {
-        User user1 = saveUser("seo", "fldlskeifk");
-        User user2 = saveUser("kim", "abcd");
+        User userA = userJpaRepository.findByUsername("userA").orElse(null);
+        User userG = userJpaRepository.findByUsername("userG").orElse(null);
         assertThrows(FollowNotFoundException.class,
-                () -> followService.unfollow(user1.getUsername(), user2.getUsername())
+                () -> followService.unfollow(userA.getUsername(), userG.getUsername())
         );
 
     }
 
-    private void follow(User who, User whom) {
-        followJpaRepository.save(new Follow(who, whom));
-    }
+//    private void follow(User who, User whom) {
+//        followJpaRepository.save(new Follow(who, whom));
+//    }
+//
+
+//    private User saveUser(String name, String password) {
+//        User user = new User(name, password);
+//        userJpaRepository.save(user);
+//        return user;
+//
+//    }
 
 
-    private User saveUser(String name, String password) {
-        User user = new User(name, password);
-        userJpaRepository.save(user);
-        return user;
-
-    }
-
-    private HashMap<String, User> saveUsers(int userNum) {
-        HashMap<String, User> map = new HashMap<>();
-        for (char i = '1'; i <= (char) (userNum + '0'); i++) {
-            String name = "user" + i;
-            map.put(name, saveUser(name, "password"));
-        }
-        return map;
-
-    }
 }

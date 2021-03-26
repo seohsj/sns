@@ -2,8 +2,6 @@ package com.hj.sns.follow;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hj.sns.exception.GlobalExceptionHandler;
-import com.hj.sns.user.User;
-import com.hj.sns.user.UserJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,12 +26,6 @@ class FollowApiControllerTest {
     @Autowired
     private GlobalExceptionHandler globalExceptionHandler;
 
-    @Autowired
-    private FollowService followService;
-
-    @Autowired
-    private UserJpaRepository userJpaRepository;
-
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -46,19 +38,13 @@ class FollowApiControllerTest {
 
     @Test
     void followingList() throws Exception {
-        for (char i = 'A'; i <= 'D'; i++) {
-            String name = "user" + i;
-            userJpaRepository.save(new User(name, "password"));
-        }
-        followService.follow("userA", "userB");
-        followService.follow("userA", "userC");
-        followService.follow("userA", "userD");
 
         mockMvc.perform(get("/api/userA/followings"))
                 .andDo(print())
                 .andExpect(jsonPath("$.content[0].username").value("userB"))
                 .andExpect(jsonPath("$.content[1].username").value("userC"))
                 .andExpect(jsonPath("$.content[2].username").value("userD"))
+                .andExpect(jsonPath("$.content[3].username").value("userE"))
                 .andExpect(jsonPath("$.pageable.offset").value(0))
                 .andExpect(jsonPath("$.pageable.pageNumber").value(0))
                 .andExpect(status().isOk());
@@ -66,36 +52,27 @@ class FollowApiControllerTest {
         mockMvc.perform(get("/api/userA/followings?page=1&size=2"))
                 .andDo(print())
                 .andExpect(jsonPath("$.content[0].username").value("userD"))
+                .andExpect(jsonPath("$.content[1].username").value("userE"))
                 .andExpect(jsonPath("$.pageable.pageNumber").value(1))
-                .andExpect(jsonPath("$.numberOfElements").value(1))
+                .andExpect(jsonPath("$.numberOfElements").value(2))
                 .andExpect(status().isOk());
 
     }
 
     @Test
     void followerList() throws Exception {
-        for (char i = 'A'; i <= 'D'; i++) {
-            String name = "user" + i;
-            userJpaRepository.save(new User(name, "password"));
-        }
 
-        followService.follow("userB", "userA");
-        followService.follow("userC", "userA");
-        followService.follow("userD", "userA");
-        followService.follow("userA", "userD");
 
         mockMvc.perform(get("/api/userA/followers"))
                 .andDo(print())
                 .andExpect(jsonPath("$.content[0].username").value("userB"))
-                .andExpect(jsonPath("$.content[1].username").value("userC"))
-                .andExpect(jsonPath("$.content[2].username").value("userD"))
                 .andExpect(jsonPath("$.pageable.offset").value(0))
                 .andExpect(jsonPath("$.pageable.pageNumber").value(0))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/api/userA/followers?page=1&size=2"))
+        mockMvc.perform(get("/api/userE/followers?page=1&size=1"))
                 .andDo(print())
-                .andExpect(jsonPath("$.content[0].username").value("userD"))
+                .andExpect(jsonPath("$.content[0].username").value("userF"))
                 .andExpect(jsonPath("$.pageable.pageNumber").value(1))
                 .andExpect(jsonPath("$.numberOfElements").value(1))
                 .andExpect(status().isOk());
@@ -105,12 +82,8 @@ class FollowApiControllerTest {
     @Test
     @DisplayName("follow요청 테스트")
     void follow() throws Exception {
-        for (char i = 'A'; i <= 'D'; i++) {
-            String name = "user" + i;
-            userJpaRepository.save(new User(name, "password"));
-        }
 
-        FollowApiController.FollowRequest request = new FollowApiController.FollowRequest("userA", "userB");
+        FollowApiController.FollowRequest request = new FollowApiController.FollowRequest("userA", "userG");
         ObjectMapper objectMapper = new ObjectMapper();
 
         mockMvc.perform(post("/api/follows")
@@ -143,12 +116,6 @@ class FollowApiControllerTest {
     @Test
     @DisplayName("unfollow 요청 테스트")
     void unfollow() throws Exception {
-        for (char i = 'A'; i <= 'C'; i++) {
-            String name = "user" + i;
-            userJpaRepository.save(new User(name, "password"));
-        }
-        followService.follow("userA", "userC");
-        followService.follow("userA", "userB");
 
 
         FollowApiController.UnfollowRequest request = new FollowApiController.UnfollowRequest("userA", "userB");
