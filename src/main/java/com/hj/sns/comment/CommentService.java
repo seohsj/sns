@@ -1,5 +1,6 @@
 package com.hj.sns.comment;
 
+import com.hj.sns.comment.exception.CommentNotFoundException;
 import com.hj.sns.comment.model.Comment;
 import com.hj.sns.photo.model.Photo;
 import com.hj.sns.photo.service.PhotoService;
@@ -26,4 +27,17 @@ public class CommentService {
         commentJpaRepository.save(comment);
         return comment.getId();
     }
+
+    @Transactional
+    public void deleteComment(Long commentId) {
+        Comment comment= findCommentById(commentId);
+        commentJpaRepository.delete(comment);
+    }
+
+    public Comment findCommentById(Long commentId) {
+        return commentJpaRepository.findById(commentId)
+                .orElseThrow(CommentNotFoundException::new);
+    }
+
+
 }

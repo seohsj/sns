@@ -7,6 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 @RequiredArgsConstructor
 @RestController
 public class CommentApiController {
@@ -15,25 +19,39 @@ public class CommentApiController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/api/photos/{photoId}/comments")
-    public CommentCreateResponse commentCreate(@PathVariable("photoId") Long photoId, CommentCreateRequest commentCreateRequest){
+    public CommentCreateResponse createComment(@PathVariable("photoId") Long photoId, @RequestBody @Valid CommentCreateRequest commentCreateRequest){
         Long id= commentService.writeComment(photoId, commentCreateRequest.writerId, commentCreateRequest.content);
         return new CommentCreateResponse(id);
+    }
+
+    @DeleteMapping("/api/comments/{commentId}")
+    public CommentDeleteResponse deleteComment(@PathVariable("commentId") Long commentId){
+        commentService.deleteComment(commentId);
+        return new CommentDeleteResponse(true);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class CommentCreateResponse{
+        private Long commentId;
     }
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    static class CommentCreateResponse{
-        private Long id;
-
-
+    static class CommentCreateRequest{
+        @NotNull
+        private Long writerId;
+        private String content;
     }
+
 
     @Data
     @AllArgsConstructor
-    static class CommentCreateRequest{
-        private Long writerId;
-        private String content;
-
+    static class CommentDeleteResponse{
+        private boolean deleted;
     }
+
+
+
 }

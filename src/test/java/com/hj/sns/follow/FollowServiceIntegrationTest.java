@@ -144,17 +144,6 @@ class FollowServiceIntegrationTest {
 
     }
 
-//    private void follow(User who, User whom) {
-//        followJpaRepository.save(new Follow(who, whom));
-//    }
-//
-
-//    private User saveUser(String name, String password) {
-//        User user = new User(name, password);
-//        userJpaRepository.save(user);
-//        return user;
-//
-//    }
 
 
 }
