@@ -51,6 +51,7 @@ public class Photo extends BaseTime {
     }
 
     protected Photo() {
+
     }
 
     public List<Tag> extractTags() {
@@ -58,7 +59,6 @@ public class Photo extends BaseTime {
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
             tags.add(new Tag(matcher.group().substring(1)));
-            if (matcher.group() == null) break;
         }
         return tags;
     }
@@ -72,11 +72,7 @@ public class Photo extends BaseTime {
     }
     public void updatePhotoTags(List<Tag> tags) {
         photoTags.clear();
-        for (Tag tag : tags) {
-            PhotoTag photoTag = new PhotoTag(this, tag);
-            this.photoTags.add(photoTag);
-
-        }
+        addPhotoTags(tags);
     }
 
     public void updateImagePath(String imagePath) {

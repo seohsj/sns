@@ -44,6 +44,9 @@ insert into comment(comment_id, user_id, content, photo_id) values(4, 2, 'commen
 insert into comment(comment_id, user_id, content, photo_id) values(5, 2, 'comment5' ,1);
 insert into comment(comment_id, user_id, content, photo_id) values(6, 3, 'comment6' ,4);
 insert into comment(comment_id, user_id, content, photo_id) values(7, 4, 'comment7' ,3);
+insert into comment_user(comment_user_id, mentioned_user_id, comment_id) values(1, 2, 2);
+insert into comment_user(comment_user_id, mentioned_user_id, comment_id) values(2, 7, 2);
+
 -- insert into user (username, password) values ('userG', 'password');
 -- insert into user (username, password) values ('userG', 'password');
 -- insert into user (username, password) values ('userG', 'password');
