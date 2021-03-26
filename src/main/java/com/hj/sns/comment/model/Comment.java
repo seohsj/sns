@@ -6,6 +6,10 @@ import com.hj.sns.user.User;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Entity
 @Getter
@@ -26,15 +30,36 @@ public class Comment extends BaseTime {
     @JoinColumn(name = "photo_id")
     private Photo photo;
 
-    public Comment(User user , String content, Photo photo){
+    @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
+    private List<CommentUser> commentUsers = new ArrayList<>();
+
+    private static final Pattern mentioned_user_pattern = Pattern.compile("@([0-9a-zA-Z가-힣_]+)");
+
+    public Comment(User user, String content, Photo photo) {
         this.user = user;
-        this.content= content;
+        this.content = content;
         this.photo = photo;
     }
 
-    protected Comment(){
+    protected Comment() {
 
     }
+
+    public List<String> extractMentionedUsers() {
+        List<String> userNames = new ArrayList<>();
+        Matcher matcher = mentioned_user_pattern.matcher(content);
+        while (matcher.find()) {
+            userNames.add(matcher.group().substring(1));
+        }
+        return userNames;
+    }
+
+    public void addMentionedUser(User user) {
+        CommentUser commentUser = new CommentUser(user, this);
+        commentUsers.add(commentUser);
+
+    }
+
 
 }
 
