@@ -23,8 +23,8 @@ class UserApiControllerTest {
     private UserApiController userApiController;
     @Autowired
     private GlobalExceptionHandler globalExceptionHandler;
-    @Autowired
-    private UserService userService;
+//    @Autowired
+//    private UserService userService;
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -37,7 +37,7 @@ class UserApiControllerTest {
     @DisplayName("회원가입 성공")
     @Test
     void join() throws Exception {
-        UserApiController.UserJoinRequest request = new UserApiController.UserJoinRequest("userA", "password");
+        UserApiController.UserJoinRequest request = new UserApiController.UserJoinRequest("newUser", "password");
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -45,10 +45,10 @@ class UserApiControllerTest {
                 .andExpect(status().isCreated());
     }
 
-    @DisplayName("중복된 아이디(UserAlreadyExistException)로 회원가입 실패")
+    @DisplayName("중복된 이름(UserAlreadyExistException)으로 회원가입 실패")
     @Test
     void joinFail() throws Exception {
-        userService.save(new User("userA","password"));
+//        userService.save(new User("userA","password"));
         UserApiController.UserJoinRequest request = new UserApiController.UserJoinRequest("userA", "password");
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/api/users")
