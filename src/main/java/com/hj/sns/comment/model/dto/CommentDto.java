@@ -5,12 +5,11 @@ import lombok.Data;
 
 @Data
 public class CommentDto {
-    private String writerName;
-    private String content;
+    String username;
+    String content;
 
-    public CommentDto(Comment c) {
-        writerName = c.getUser().getUsername();
-        content = c.getContent();
+    public CommentDto(Comment comment){
+        username= comment.getUser().getUsername();
+        content= comment.getContent();
     }
-
 }

@@ -1,8 +1,9 @@
 package com.hj.sns.follow;
 
-import org.springframework.data.domain.Page;
+import com.hj.sns.user.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,15 +12,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FollowJpaRepository extends JpaRepository<Follow, Long> {
-    @Query("select f from Follow f join fetch f.whom where f.who.id=:userId")
-    List<Follow> findFollowByWho_Id(@Param("userId") Long userId);
 
-    @Query("select f from Follow f where f.who.id=:whoId and f.whom.id=:whomId")
-    Optional<Follow> findByWho_IdAndWhom_Id(@Param("whoId") Long whoId, @Param("whomId") Long whomId);
+    @EntityGraph(attributePaths = {"whom"})
+    List<Follow> findFollowByWho(User user);
 
-    @Query("select f from Follow f join fetch f.whom where f.who.id=:whoId")
-    Slice<Follow> pagingFindByWho(@Param("whoId") Long whoId, Pageable pageable);
+    @EntityGraph(attributePaths = {"who"})
+    List<Follow> findFollowByWhom(User user);
 
-    @Query("select f from Follow f join fetch f.who where f.whom.id=:whomId")
-    Slice<Follow> pagingFindByWhom(@Param("whomId") Long whomId, Pageable pageable);
+    Optional<Follow> findByWhoAndWhom(User who, User whom);
+
+    @Query("select f from Follow f join fetch f.whom where f.who=:who")
+    Slice<Follow> pagingFindByWho(@Param("who") User who, Pageable pageable);
+
+    @Query("select f from Follow f join fetch f.who where f.whom=:whom")
+    Slice<Follow> pagingFindByWhom(@Param("whom") User whom, Pageable pageable);
 }

@@ -36,13 +36,11 @@ public class FollowApiController {
     @PostMapping("/api/follows")
     public void requestFollow(@RequestBody @Valid FollowRequest followRequest) {
         followService.follow(followRequest.getWho(), followRequest.getWhom());
-//        return new ResponseEntity<>(HttpStatus.CREATED);
     }
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping("/api/follows")
     public void requestUnfollow(@RequestBody @Valid UnfollowRequest unfollowRequest){
         followService.unfollow(unfollowRequest.getWho(), unfollowRequest.getWhom());
-//        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Data

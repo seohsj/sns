@@ -26,6 +26,15 @@ public class Comment extends BaseTime {
     @JoinColumn(name = "photo_id")
     private Photo photo;
 
+    public Comment(User user , String content, Photo photo){
+        this.user = user;
+        this.content= content;
+        this.photo = photo;
+    }
+
+    protected Comment(){
+
+    }
 
 }
 

@@ -19,7 +19,7 @@ public class PhotoTag {
     @JoinColumn(name = "photo_id")
     private Photo photo;
 
-    @ManyToOne(fetch = FetchType.LAZY) //강의 참고
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_id")
     private Tag tag;
 

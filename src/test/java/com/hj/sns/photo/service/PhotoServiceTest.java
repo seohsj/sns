@@ -1,46 +1,45 @@
 package com.hj.sns.photo.service;
 
-import com.hj.sns.follow.FollowService;
+import com.hj.sns.photo.exception.PhotoNotFoundException;
+import com.hj.sns.photo.model.Photo;
 import com.hj.sns.photo.repository.PhotoJpaRepository;
-import com.hj.sns.photo.repository.PhotoRepository;
-import com.hj.sns.tag.service.TagService;
-import com.hj.sns.user.UserService;
+import com.hj.sns.user.User;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/*TODO: 완성하기*/
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class PhotoServiceTest {
     @InjectMocks
-    PhotoService photoService;
+    private PhotoService photoService;
+    @Mock
+    private PhotoJpaRepository photoJpaRepository;
 
-    @Mock
-    PhotoJpaRepository photoJpaRepository;
-    @Mock
-    FollowService followService;
-    @Mock
-    PhotoRepository photoQueryRepository;
-    @Mock
-    UserService userService;
-    @Mock
-    TagService tagService;
+    @Test
+    @DisplayName("id로 photo를 찾는다")
+    void findPhotoById() {
+        User user = new User("userA", "password");
+        when(photoJpaRepository.findById(1L))
+                .thenReturn(Optional.of(new Photo(user, "imagePath", "content")));
+        Photo photo = photoService.findPhotoById(1L);
+        assertThat(photo.getImagePath()).isEqualTo("imagePath");
+        assertThat(photo.getContent()).isEqualTo("content");
+    }
 
-//    @Test
-//    @DisplayName("photo를 저장한다.")
-//    void save() {
-//        when(userService.findUserById(1L)).thenReturn(new User("userA","password"));
-//
-//
-//    }
-//
-//
-//    @Test
-//    @DisplayName("following하고 있는 사람의 사진들을 모두 조회한다")
-//    void findAllPhotosOfFollowing() {
-//
-//    }
-
+    @Test
+    @DisplayName("해당 id의 photo가 없을 경우 예외를 발생시킨다")
+    void findPhotoByIdFail() {
+        when(photoJpaRepository.findById(1L)).thenReturn(Optional.empty());
+        PhotoNotFoundException e = assertThrows(PhotoNotFoundException.class, () -> photoService.findPhotoById(1L));
+        assertThat(e.getMessage()).isEqualTo("해당 사진이 존재하지 않습니다.");
+    }
 }

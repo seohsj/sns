@@ -25,20 +25,21 @@ public class FollowService {
     private final FollowJpaRepository followJpaRepository;
     private final UserService userService;
 
-    public List<User> findFollowings(Long userId) {
-        List<Follow> followings = followJpaRepository.findFollowByWho_Id(userId);
+    public List<User> findFollowings(User user) {
+        List<Follow> followings=followJpaRepository.findFollowByWho(user);
         return followings.stream().map(f -> f.getWhom()).collect(Collectors.toList());
     }
 
+
     public Slice<FollowingDto> findFollowingsPaging(String username, Pageable pageable) {
         User user = userService.findUserByName(username);
-        return followJpaRepository.pagingFindByWho(user.getId(), pageable)
+        return followJpaRepository.pagingFindByWho(user, pageable)
                 .map(FollowingDto::new);
     }
 
     public Slice<FollowerDto> findFollowerPaging(String username, Pageable pageable) {
         User user = userService.findUserByName(username);
-        return followJpaRepository.pagingFindByWhom(user.getId(), pageable)
+        return followJpaRepository.pagingFindByWhom(user, pageable)
                 .map(FollowerDto::new);
     }
 
@@ -47,7 +48,7 @@ public class FollowService {
         User who = userService.findUserByName(whoName);
         User whom = userService.findUserByName(whomName);
         //이미 follow한 경우
-        followJpaRepository.findByWho_IdAndWhom_Id(who.getId(), whom.getId())
+        followJpaRepository.findByWhoAndWhom(who, whom)
                 .ifPresent(f -> {
                     throw new FollowAlreadyExistException();
                 });
@@ -62,8 +63,8 @@ public class FollowService {
     public void unfollow(String whoName, String whomName) {
         User who = userService.findUserByName(whoName);
         User whom = userService.findUserByName(whomName);
-        Follow follow = followJpaRepository.findByWho_IdAndWhom_Id(who.getId(), whom.getId())
-                .orElseThrow(() -> new FollowNotFoundException());
+        Follow follow = followJpaRepository.findByWhoAndWhom(who, whom)
+                .orElseThrow(FollowNotFoundException::new);
         followJpaRepository.delete(follow);
     }
 

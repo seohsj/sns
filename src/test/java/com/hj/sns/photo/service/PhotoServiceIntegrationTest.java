@@ -1,22 +1,28 @@
 package com.hj.sns.photo.service;
 
-import com.hj.sns.follow.Follow;
-import com.hj.sns.follow.FollowJpaRepository;
+import com.hj.sns.comment.CommentJpaRepository;
+import com.hj.sns.comment.CommentService;
+import com.hj.sns.follow.FollowService;
+import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.photo.model.Photo;
+import com.hj.sns.photo.model.PhotoTag;
+import com.hj.sns.photo.model.dto.PhotoDto;
+import com.hj.sns.photo.model.dto.PhotoFeedDto;
 import com.hj.sns.photo.repository.PhotoJpaRepository;
-import com.hj.sns.user.User;
-import com.hj.sns.user.UserJpaRepository;
+import com.hj.sns.tag.repository.TagJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -24,114 +30,160 @@ class PhotoServiceIntegrationTest {
 
     @Autowired
     private PhotoService photoService;
+
     @Autowired
-    private UserJpaRepository userJpaRepository;
-    @Autowired
-    private FollowJpaRepository followJpaRepository;
+    private TagJpaRepository tagJpaRepository;
     @Autowired
     private PhotoJpaRepository photoJpaRepository;
-
-
+    @Autowired
+    private FollowService followService;
+    @Autowired
+    private CommentService commentService;
+@Autowired private CommentJpaRepository commentJpaRepository;
+    @Autowired
+    private EntityManager em;
 
     @Test
     @DisplayName("photo를 저장한다.")
     void save() {
-        User user = new User("userA", "password");
-        userJpaRepository.save(user);
-        String tag1 = "tag1";
-        String tag2 = "tag2";
-        String content = "content1";
-        content = content + "#" + tag1 + "#" + tag2;
-        String imagePath = "imagePath1";
 
-        Long photoId = photoService.save(user.getId(), imagePath, content);
+        Long photoId = photoService.save(1L, "imagePath1", "content #tag1 #tag2");
+        Long photoId2 = photoService.save(1L, "imagePath1", "content #tag1 #tag2");
+        Long photoId3 = photoService.save(1L, "imagePath1", "content #tag1#tag3#tag2#tag3");
+
+        em.flush();
+        em.clear();
+
         Photo findPhoto = photoJpaRepository.findById(photoId).get();
+        Photo findPhoto2 = photoJpaRepository.findById(photoId2).get();
+        Photo findPhoto3 = photoJpaRepository.findById(photoId3).get();
+
 
         assertThat(findPhoto.getPhotoTags().size()).isEqualTo(2);
-        assertThat(findPhoto.getUser().getId()).isEqualTo(user.getId());
-        assertThat(findPhoto.getImagePath()).isEqualTo(imagePath);
+        assertThat(findPhoto.getUser().getId()).isEqualTo(1L);
+        assertThat(findPhoto.getImagePath()).isEqualTo("imagePath1");
         assertTrue(findPhoto.getPhotoTags().stream()
                 .allMatch(pt -> (
-                        pt.getTag().getName().equals(tag1) || pt.getTag().getName().equals(tag2)
+                        pt.getTag().getName().equals("tag1") || pt.getTag().getName().equals("tag2")
                 )));
+
+        assertThat(findPhoto2.getPhotoTags().size()).isEqualTo(2);
+        assertThat(findPhoto2.getUser().getId()).isEqualTo(1L);
+        assertThat(findPhoto2.getImagePath()).isEqualTo("imagePath1");
+        assertTrue(findPhoto2.getPhotoTags().stream()
+                .allMatch(pt -> (
+                        pt.getTag().getName().equals("tag1") || pt.getTag().getName().equals("tag2")
+                )));
+
+        assertThat(findPhoto3.getPhotoTags().size()).isEqualTo(3);
+        assertThat(findPhoto3.getUser().getId()).isEqualTo(1L);
+        assertThat(findPhoto3.getImagePath()).isEqualTo("imagePath1");
+        assertTrue(findPhoto3.getPhotoTags().stream()
+                .allMatch(pt -> (
+                        pt.getTag().getName().equals("tag1") || pt.getTag().getName().equals("tag2") || pt.getTag().getName().equals("tag3")
+                )));
+
+        assertTrue(tagJpaRepository.findByName("tag1").isPresent());
+        assertTrue(tagJpaRepository.findByName("tag2").isPresent());
+        assertTrue(tagJpaRepository.findByName("tag3").isPresent());
+
+    }
+
+    @Test
+    @DisplayName("photo를 수정한다.")
+    void updatePhoto() {
+
+        photoService.updatePhoto(1L, null, "#update#content");
+
+        em.flush();
+        em.clear();
+        System.out.println("---------------------------2");
+        Photo photo = photoService.findPhotoById(1L);
+        assertThat(photo.getImagePath()).isEqualTo("imagePath");
+        assertTrue(photo.getPhotoTags().stream().allMatch(pt ->
+                (pt.getTag().getName().equals("content") || pt.getTag().getName().equals("update")))
+        );
+        assertThat(photo.getPhotoTags().size()).isEqualTo(2);
+        em.flush();
+        em.clear();
+        photoService.updatePhoto(1L, "newImagePath", null);
+        em.flush();
+        em.clear();
+        Photo photo2 = photoService.findPhotoById(1L);
+        assertThat(photo2.getImagePath()).isEqualTo("newImagePath");
+        assertTrue(photo2.getPhotoTags().stream().allMatch(pt ->
+                (pt.getTag().getName().equals("content") || pt.getTag().getName().equals("update")))
+        );
+        assertThat(photo2.getPhotoTags().size()).isEqualTo(2);
+        em.flush();
+        em.clear();
+        photoService.updatePhoto(1L, "NewNewImagePath", "newContent");
+        em.flush();
+        em.clear();
+        Photo photo3 = photoService.findPhotoById(1L);
+        assertThat(photo3.getImagePath()).isEqualTo("NewNewImagePath");
+        assertThat(photo3.getPhotoTags().size()).isEqualTo(0);
+
     }
 
 
     @Test
-    @DisplayName("following하고 있는 사람의 사진들을 모두 조회한다")
-    void findAllPhotosOfFollowing() {
-        User user1 = saveUser("seo", "fldlskeifk");
-        photoService.save(user1.getId(), "imagepath1", "#스프링");
-        photoService.save(user1.getId(), "imagepath2", "contentcontent");
-        photoService.save(user1.getId(), "imagepath3", "#tag#test");
+    @DisplayName("user가 업로드한 사진을 페이징으로 조회한다")
+    void findPhotoByUser() {
 
-        User user2 = saveUser("kim", "abcd");
-        photoService.save(user2.getId(), "imagepath4", "#jpa#spring");
-        photoService.save(user2.getId(), "imagepath5", "abcdefg#aaaaa");
+        Slice<PhotoDto> photoByUser = photoService.findPhotoByUser("userA", PageRequest.of(0, 20));
 
-        User user3 = saveUser("lee", "fdsfeas");
-        photoService.save(user3.getId(), "imagepath6", "#태그");
-        photoService.save(user3.getId(), "imagepath7", "테스트테스트#테스트 테스트");
-        photoService.save(user3.getId(), "imagepath8", "학교#맛집");
-
-
-        User user4 = saveUser("choi", "mkmkl");
-        photoService.save(user4.getId(), "imagepath9", "#photo");
-
-
-        follow(user1, user2);
-        follow(user1, user3);
-        follow(user1, user4);
-        follow(user2, user3);
-        follow(user2, user1);
-
-        System.out.println("line -------------------------------------------");
-
-        List<Photo> result= photoService.findAllPhotosOfFollowing(user1.getId());
-        assertThat(result.size()).isEqualTo(6);
-        assertTrue(result.stream()
-                .allMatch(r -> (
-                        r.getUser().getUsername().equals("kim") || r.getUser().getUsername().equals("lee") || r.getUser().getUsername().equals("choi")
-                )));
-
-        List<String> tags = new ArrayList<>();
-        for (Photo photo : result) {
-            photo.getPhotoTags().forEach(t ->
-                tags.add(t.getTag().getName())
+        assertThat(photoByUser.getContent().size()).isEqualTo(3);
+        assertFalse(photoByUser.hasNext());
+        assertTrue(photoByUser.isFirst());
+        for (PhotoDto p : photoByUser.getContent()) {
+            assertTrue(p.getTags().stream()
+                    .allMatch(t -> (
+                            t.getTagName().equals("tagA") ||
+                                    t.getTagName().equals("tagB") ||
+                                    t.getTagName().equals("tagC")||
+                                    t.getTagName().equals("tagD")
+                    ))
             );
+            int size = p.getComments().size();
+            assertTrue(size==3||size==0||size==1);
+
         }
-        assertThat(tags.size()).isEqualTo(7);
-
-        assertTrue(tags.stream().allMatch(t->(
-                t.equals("jpa")||t.equals("spring")||t.equals("aaaaa")||t.equals("태그")||t.equals("테스트")||t.equals("맛집")||t.equals("photo")
-                )));
-
-
-        List<Photo> result2 = photoService.findAllPhotosOfFollowing(user2.getId());
-        assertThat(result2.size()).isEqualTo(6);
-        assertTrue(result2.stream()
-                .allMatch(r -> (
-                        r.getUser().getUsername().equals("seo") || r.getUser().getUsername().equals("lee")
-                )));
-//        for (PhotoDto photo : allPhotosOfFollowing.getData()) {
-//            System.out.println(photo.getImagePath());
-//            System.out.println(photo.getTags());
-//            System.out.println(photo.getContent());
-//            System.out.println("--------------------------------------------------");
-//        }
 
     }
 
+    @Test
+    @DisplayName("user의 피드를 조회한다")
+    void getFeedByUser() {
 
-    private void follow(User who, User whom) {
-        followJpaRepository.save(new Follow(who, whom));
+        Slice<PhotoFeedDto> photos = photoService.getUserFeed("userA", PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "id")));
+
+        assertThat(photos.getContent().size()).isEqualTo(6);
+        assertThat(photos.getContent().get(0).getUsername()).isEqualTo("userC");
+
+        followService.unfollow("userA", "userB");
+        em.flush();
+        em.clear();
+        Slice<PhotoFeedDto> photos3 = photoService.getUserFeed("userA", PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "id")));
+        assertThat(photos3.getContent().size()).isEqualTo(4);
+
+        followService.unfollow("userA", "userC");
+        em.flush();
+        em.clear();
+        Slice<PhotoFeedDto> photos4 = photoService.getUserFeed("userA", PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "id")));
+        assertThat(photos4.getContent().size()).isEqualTo(3);
+
     }
 
+    @Test
+    @DisplayName("photo를 삭제한다.")
+    void deletePhoto() {
 
-    private User saveUser(String name, String password) {
-        User user = new User(name, password);
-        userJpaRepository.save(user);
-        return user;
-
+        photoService.deletePhoto(1L);
+        assertThrows(PhotoNotFoundException.class, ()->photoService.findPhotoById(1L));
+        assertTrue(commentJpaRepository.findById(1L).isEmpty());
+        assertTrue(commentJpaRepository.findById(4L).isEmpty());
+        assertTrue(commentJpaRepository.findById(5L).isEmpty());
+        assertThat(em.find(PhotoTag.class,1L)).isNull();
     }
 }

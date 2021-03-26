@@ -1,17 +1,24 @@
 package com.hj.sns.photo.service;
 
 import com.hj.sns.follow.FollowService;
+import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.photo.model.Photo;
+import com.hj.sns.photo.model.dto.PhotoDto;
+import com.hj.sns.photo.model.dto.PhotoFeedDto;
 import com.hj.sns.photo.repository.PhotoJpaRepository;
-import com.hj.sns.photo.repository.PhotoRepository;
 import com.hj.sns.tag.model.Tag;
-import com.hj.sns.tag.service.TagService;
+import com.hj.sns.tag.repository.TagJpaRepository;
 import com.hj.sns.user.User;
 import com.hj.sns.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,53 +26,77 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class PhotoService {
     private final PhotoJpaRepository photoJpaRepository;
-    private final FollowService followService;
-    private final PhotoRepository photoQueryRepository;
     private final UserService userService;
-    private final TagService tagService;
+    private final TagJpaRepository tagJpaRepository;
+    private final FollowService followService;
 
-/*ToDo: 완성하기*/
-    
     @Transactional
     public Long save(Long userId, String imagePath, String content) {
         User user = userService.findUserById(userId);
         Photo photo = new Photo(user, imagePath, content);
         List<Tag> tags = photo.extractTags();
-        tagService.saveTags(tags);
-        photo.addPhotoTags(tags);
+
+        List<Tag> collect = tags.stream().map(
+                tag -> tagJpaRepository.findByName(
+                        tag.getName()).orElseGet(() -> tagJpaRepository.save(tag)
+                ))
+                .distinct()
+                .collect(Collectors.toList());
+
+        photo.addPhotoTags(collect);
         photoJpaRepository.save(photo);
         return photo.getId();
     }
 
 
-//    public Result<List<PhotoDto>> findAllPhotosOfFollowing(Long userId) {
-//
-//        List<User> followings = followService.findFollowings(userId);
-//        List<Long> ids = toFollowingsIds(followings);
-//        List<Photo> photoList = findPhotosWithUserIds(ids);
-//
-//        List<PhotoDto> photos = new ArrayList<>();
-//        photoList.forEach(p ->
-//            photos.add(new PhotoDto(p))
-//        );
-//
-//        return new Result<>(photos);
-//}
-
-    public List<Photo> findAllPhotosOfFollowing(Long userId) {
-
-        List<User> followings = followService.findFollowings(userId);
-        List<Long> ids = toFollowingsIds(followings);
-        return findPhotosWithUserIds(ids);
-    }
-    public List<Photo> findPhotosWithUserIds(List<Long> userIds) {
-        return photoQueryRepository.findPhotoWithUserIds(userIds);
+    public Photo findPhotoById(Long id){
+        return photoJpaRepository.findById(id)
+                .orElseThrow(PhotoNotFoundException::new);
     }
 
-    private List<Long> toFollowingsIds(List<User> followings) {
-        return followings.stream()
-                .map(f -> f.getId())
-                .collect(Collectors.toList());
+    public Slice<PhotoDto> findPhotoByUser(String username, Pageable pageable) {
+        User user = userService.findUserByName(username);
+        Slice<Photo> photos = photoJpaRepository.findPhotoByUser(user, pageable);
+        return photos.map(PhotoDto::new);
     }
 
+    public Slice<PhotoFeedDto> getUserFeed(String username, Pageable pageable){
+        List<Long> ids = new ArrayList<>();
+        User user = userService.findUserByName(username);
+        ids.add(user.getId());
+
+        List<User> followings = followService.findFollowings(user);
+        for(User f: followings){
+            ids.add(f.getId());
+        }
+
+        return photoJpaRepository.findFeedByUser(ids, pageable).map(PhotoFeedDto::new);
+    }
+
+    @Transactional
+    public Long updatePhoto(Long photoId, String imagePath, String content) {
+        Photo photo = findPhotoById(photoId);
+        if(imagePath!=null){
+            photo.updateImagePath(imagePath);
+        }
+        if(content!=null){
+            photo.updateContent(content);
+            List<Tag> tags = photo.extractTags();
+
+            List<Tag> collect = tags.stream().map(
+                    tag -> tagJpaRepository.findByName(
+                            tag.getName()).orElseGet(() -> tagJpaRepository.save(tag)
+                    )).collect(Collectors.toList());
+            photo.updatePhotoTags(collect);
+
+        }
+        return photo.getId();
+
+    }
+
+    @Transactional
+    public void deletePhoto(Long photoId) {
+        Photo photo = findPhotoById(photoId);
+        photoJpaRepository.delete(photo);
+    }
 }
