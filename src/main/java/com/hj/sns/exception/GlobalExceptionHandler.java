@@ -1,5 +1,7 @@
 package com.hj.sns.exception;
 
+import com.hj.sns.comment.exception.CommentNotFoundException;
+import com.hj.sns.comment.model.Comment;
 import com.hj.sns.follow.exception.FollowAlreadyExistException;
 import com.hj.sns.follow.exception.FollowNotFoundException;
 import com.hj.sns.photo.exception.PhotoNotFoundException;
@@ -42,4 +44,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(PhotoNotFoundException.class)
     public ErrorResponse photoNotFoundException(PhotoNotFoundException e) {
         return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-    }}
+    }
+
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CommentNotFoundException.class)
+    public ErrorResponse commentNotFoundException(CommentNotFoundException e){
+        return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+    }
+}

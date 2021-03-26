@@ -1,5 +1,6 @@
 package com.hj.sns.comment;
 
+import com.hj.sns.comment.exception.CommentNotFoundException;
 import com.hj.sns.comment.model.Comment;
 import com.hj.sns.photo.repository.PhotoJpaRepository;
 import com.hj.sns.photo.service.PhotoService;
@@ -16,8 +17,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -37,15 +37,17 @@ class CommentServiceIntegrationTest {
     @DisplayName("댓글 작성")
     void writeComment() {
 
-        Long id = photoService.save(1L, "imagePath", "photo");
-
-        em.flush();
-        em.clear();
-        commentService.writeComment(id, 1L, "comment");
-        commentService.writeComment(id, 2L, "comment");
-        List<Comment> comments = photoService.findPhotoById(id).getComments();
+        commentService.writeComment(6L, 1L, "comment");
+        commentService.writeComment(6L, 2L, "comment");
+        List<Comment> comments = photoService.findPhotoById(6L).getComments();
         assertThat(comments.size()).isEqualTo(2);
         assertTrue(comments.stream().allMatch(c -> (c.getUser().getId().equals(1L) || c.getUser().getId().equals(2L))));
+    }
+    @Test
+    @DisplayName("댓글 삭제")
+    void deleteComment(){
+        commentService.deleteComment(1L);
+        assertThrows(CommentNotFoundException.class,()->commentService.findCommentById(1L));
     }
 
 }

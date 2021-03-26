@@ -28,7 +28,7 @@ public class PhotoApiController {
     }
 
     @PatchMapping("/api/photos/{photoId}")
-    public PhotoUpdateResponse updatePhoto(@PathVariable("photoId") Long photoId,@RequestBody @Valid PhotoUpdateRequest photoUpdateRequest) {
+    public PhotoUpdateResponse updatePhoto(@PathVariable("photoId") Long photoId,@RequestBody PhotoUpdateRequest photoUpdateRequest) {
         photoService.updatePhoto(photoId, photoUpdateRequest.getImagePath(), photoUpdateRequest.getContent());
         return new PhotoUpdateResponse(photoId);
     }
