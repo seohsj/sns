@@ -95,11 +95,11 @@ class PhotoApiControllerTest {
                 .andExpect(jsonPath("$.content[1].content").value("#tagA#tagB"))
                 .andExpect(jsonPath("$.content[1].tags[0].tagName").value("tagA"))
                 .andExpect(jsonPath("$.content[1].tags[1].tagName").value("tagB"))
-                .andExpect(jsonPath("$.content[2].content").value("#tagC#tagD"))
+                .andExpect(jsonPath("$.content[2].content").value("#tagC#tagD @userC"))
                 .andExpect(jsonPath("$.content[2].tags[0].tagName").value("tagC"))
                 .andExpect(jsonPath("$.content[2].tags[1].tagName").value("tagD"))
                 .andExpect(jsonPath("$.content[2].comments[0].content").value("comment7"))
-
+                .andExpect(jsonPath("$.content[2].mentionedUsers[0].username").value("userC"))
                 .andExpect(status().isOk());
     }
 
@@ -119,6 +119,7 @@ class PhotoApiControllerTest {
                 .andExpect(jsonPath("$.content[2].username").value("userA"))
                 .andExpect(jsonPath("$.content[2].tags[0].tagName").value("tagC"))
                 .andExpect(jsonPath("$.content[2].tags[1].tagName").value("tagD"))
+                .andExpect(jsonPath("$.content[2].mentionedUsers[0].username").value("userC"))
                 .andExpect(jsonPath("$.content[2].comments[0].content").value("comment7"))
                 .andExpect(jsonPath("$.content[3].username").value("userB"))
                 .andExpect(jsonPath("$.content[3].tags[0].tagName").value("tagA"))

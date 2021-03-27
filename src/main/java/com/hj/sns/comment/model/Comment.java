@@ -33,7 +33,7 @@ public class Comment extends BaseTime {
     @OneToMany(mappedBy = "comment", cascade = CascadeType.ALL)
     private List<CommentUser> commentUsers = new ArrayList<>();
 
-    private static final Pattern mentioned_user_pattern = Pattern.compile("@([0-9a-zA-Z가-힣_]+)");
+    private static final Pattern mentionedUserPattern = Pattern.compile("@([0-9a-zA-Z가-힣_]+)");
 
     public Comment(User user, String content, Photo photo) {
         this.user = user;
@@ -47,7 +47,7 @@ public class Comment extends BaseTime {
 
     public List<String> extractMentionedUsers() {
         List<String> userNames = new ArrayList<>();
-        Matcher matcher = mentioned_user_pattern.matcher(content);
+        Matcher matcher = mentionedUserPattern.matcher(content);
         while (matcher.find()) {
             userNames.add(matcher.group().substring(1));
         }

@@ -34,60 +34,31 @@ public class PhotoService {
     public Long save(Long userId, String imagePath, String content) {
         User user = userService.findUserById(userId);
         Photo photo = new Photo(user, imagePath, content);
-        List<Tag> tags = photo.extractTags();
 
-        List<Tag> collect = tags.stream().map(
-                tag -> tagJpaRepository.findByName(
-                        tag.getName()).orElseGet(() -> tagJpaRepository.save(tag)
-                ))
-                .distinct()
-                .collect(Collectors.toList());
+        List<Tag> tags = extractTags(photo);
+        photo.addPhotoTags(tags);
 
-        photo.addPhotoTags(collect);
+        List<User> users = extractMentionedUsers(photo);
+        photo.addMentionedUsers(users);
+
         photoJpaRepository.save(photo);
         return photo.getId();
     }
 
 
-    public Photo findPhotoById(Long id){
-        return photoJpaRepository.findById(id)
-                .orElseThrow(PhotoNotFoundException::new);
-    }
-
-    public Slice<PhotoDto> findPhotoByUser(String username, Pageable pageable) {
-        User user = userService.findUserByName(username);
-        Slice<Photo> photos = photoJpaRepository.findPhotoByUser(user, pageable);
-        return photos.map(PhotoDto::new);
-    }
-
-    public Slice<PhotoFeedDto> getUserFeed(String username, Pageable pageable){
-        List<Long> ids = new ArrayList<>();
-        User user = userService.findUserByName(username);
-        ids.add(user.getId());
-
-        List<User> followings = followService.findFollowings(user);
-        for(User f: followings){
-            ids.add(f.getId());
-        }
-
-        return photoJpaRepository.findFeedByUser(ids, pageable).map(PhotoFeedDto::new);
-    }
-
     @Transactional
     public Long updatePhoto(Long photoId, String imagePath, String content) {
         Photo photo = findPhotoById(photoId);
-        if(imagePath!=null){
+        if (imagePath != null) {
             photo.updateImagePath(imagePath);
         }
-        if(content!=null){
+        if (content != null) {
             photo.updateContent(content);
-            List<Tag> tags = photo.extractTags();
+            List<Tag> tags = extractTags(photo);
+            photo.updatePhotoTags(tags);
 
-            List<Tag> collect = tags.stream().map(
-                    tag -> tagJpaRepository.findByName(
-                            tag.getName()).orElseGet(() -> tagJpaRepository.save(tag)
-                    )).collect(Collectors.toList());
-            photo.updatePhotoTags(collect);
+            List<User> users = extractMentionedUsers(photo);
+            photo.updateMentionedUsers(users);
 
         }
         return photo.getId();
@@ -99,4 +70,57 @@ public class PhotoService {
         Photo photo = findPhotoById(photoId);
         photoJpaRepository.delete(photo);
     }
+
+    public Photo findPhotoById(Long id) {
+        return photoJpaRepository.findById(id)
+                .orElseThrow(PhotoNotFoundException::new);
+    }
+
+    public Slice<PhotoDto> findPhotoByUser(String username, Pageable pageable) {
+        User user = userService.findUserByName(username);
+        Slice<Photo> photos = photoJpaRepository.findPhotoByUser(user, pageable);
+        return photos.map(PhotoDto::new);
+    }
+
+    public Slice<PhotoFeedDto> getUserFeed(String username, Pageable pageable) {
+        List<Long> ids = new ArrayList<>();
+        User user = userService.findUserByName(username);
+        ids.add(user.getId());
+
+        List<User> followings = followService.findFollowings(user);
+        for (User f : followings) {
+            ids.add(f.getId());
+        }
+
+        return photoJpaRepository.findFeedByUser(ids, pageable).map(PhotoFeedDto::new);
+    }
+
+    private List<Tag> extractTags(Photo photo) {
+        List<String> tagNames = photo.extractTags();
+        return getTags(tagNames);
+    }
+
+    private List<Tag> getTags(List<String> tagNames) {
+        return tagNames.stream().map(
+                tagName -> tagJpaRepository.findByName(tagName)
+                        .orElseGet(() -> tagJpaRepository.save(new Tag(tagName))
+                        ))
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    private List<User> extractMentionedUsers(Photo photo) {
+        List<String> userNames = photo.extractMentionedUsers();
+        return getUsers(userNames);
+
+    }
+
+    private List<User> getUsers(List<String> userNames) {
+        return userNames.stream().map(userService::findUserByName)
+                .distinct()
+                .collect(Collectors.toList());
+
+    }
+
+
 }
