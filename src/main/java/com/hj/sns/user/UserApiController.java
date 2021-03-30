@@ -27,7 +27,6 @@ public class UserApiController {
     }
 
 
-
     @Data
     static class UserJoinResponse {
         private Long id;
@@ -36,8 +35,6 @@ public class UserApiController {
             this.id = id;
         }
     }
-//1. class가 default면 생성자의 범위는 어디서부터 될까?
-
 
     @Data
     @AllArgsConstructor

@@ -2,6 +2,7 @@ package com.hj.sns.photo.model;
 
 import com.hj.sns.common.BaseTime;
 import com.hj.sns.comment.model.Comment;
+import com.hj.sns.tag.model.PhotoTag;
 import com.hj.sns.tag.model.Tag;
 import com.hj.sns.user.User;
 import lombok.Getter;
@@ -38,11 +39,17 @@ public class Photo extends BaseTime {
     private List<PhotoTag> photoTags = new ArrayList<>();
 
 
+    @OneToMany(mappedBy="photo", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MentionedUser> MentionedUsers = new ArrayList<>();
+
+
     @OneToMany(mappedBy = "photo", cascade= CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
 
-    private static final Pattern pattern = Pattern.compile("#([0-9a-zA-Z가-힣]+)");
+    private static final Pattern hashTagPattern = Pattern.compile("#([0-9a-zA-Z가-힣]+)");
+    private static final Pattern mentionedUserPattern = Pattern.compile("@([0-9a-zA-Z가-힣_]+)");
+
 
     public Photo(User user, String imagePath, String content) {
         this.user = user;
@@ -53,15 +60,10 @@ public class Photo extends BaseTime {
     protected Photo() {
 
     }
-
-    public List<Tag> extractTags() {
-        List<Tag> tags = new ArrayList<>();
-        Matcher matcher = pattern.matcher(content);
-        while (matcher.find()) {
-            tags.add(new Tag(matcher.group().substring(1)));
-        }
-        return tags;
+    public List<String> extractTags() {
+        return extractPattern(hashTagPattern);
     }
+
 
     public void addPhotoTags(List<Tag> tags) {
         for (Tag tag : tags) {
@@ -75,6 +77,24 @@ public class Photo extends BaseTime {
         addPhotoTags(tags);
     }
 
+    public List<String> extractMentionedUsers() {
+        return extractPattern(mentionedUserPattern);
+    }
+
+
+    public void addMentionedUsers(List<User> users) {
+        for(User user: users){
+            MentionedUser mentionedUser = new MentionedUser(user, this);
+            MentionedUsers.add(mentionedUser);
+        }
+
+    }
+    public void updateMentionedUsers(List<User> users) {
+        MentionedUsers.clear();
+        addMentionedUsers(users);
+
+    }
+
     public void updateImagePath(String imagePath) {
         this.imagePath = imagePath;
 
@@ -82,6 +102,15 @@ public class Photo extends BaseTime {
 
     public void updateContent(String content) {
         this.content = content;
+    }
+
+    private List<String> extractPattern(Pattern mentionedUserPattern) {
+        List<String> userNames = new ArrayList<>();
+        Matcher matcher = mentionedUserPattern.matcher(content);
+        while (matcher.find()) {
+            userNames.add(matcher.group().substring(1));
+        }
+        return userNames;
     }
 
 

@@ -1,17 +1,17 @@
-package com.hj.sns.comment.model;
+package com.hj.sns.photo.model;
 
+import com.hj.sns.comment.model.Comment;
 import com.hj.sns.user.User;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-public class CommentUser {
+public class MentionedUser {
     @Id
+    @Column(name = "photo_user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_user_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -19,14 +19,15 @@ public class CommentUser {
     private User mentionedUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "comment_id")
-    private Comment comment;
+    @JoinColumn(name = "photo_id")
+    private Photo photo;
 
-    protected CommentUser(){}
-    public CommentUser(User user, Comment comment){
-        mentionedUser=user;
-        this.comment=comment;
+    protected MentionedUser() {
+    }
 
+    public MentionedUser(User user, Photo photo) {
+        mentionedUser = user;
+        this.photo = photo;
     }
 
 }

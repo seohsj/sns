@@ -17,6 +17,7 @@ public class PhotoDto {
     private List<CommentDto> comments;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
+    private List<MentionedUserDto> mentionedUsers;
     public PhotoDto(Photo p) {
         imagePath = p.getImagePath();
         content = p.getContent();
@@ -24,6 +25,7 @@ public class PhotoDto {
         comments = p.getComments().stream().map(CommentDto::new).collect(Collectors.toList());
         createdDate = p.getCreatedDate();
         lastModifiedDate = p.getLastModifiedDate();
+        mentionedUsers = p.getMentionedUsers().stream().map(MentionedUserDto::new).collect(Collectors.toList());
     }
 
 

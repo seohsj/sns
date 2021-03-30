@@ -1,6 +1,6 @@
 package com.hj.sns.photo.model.dto;
 
-import com.hj.sns.photo.model.PhotoTag;
+import com.hj.sns.tag.model.PhotoTag;
 import lombok.Data;
 
 @Data

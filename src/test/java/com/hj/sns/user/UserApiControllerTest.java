@@ -23,8 +23,7 @@ class UserApiControllerTest {
     private UserApiController userApiController;
     @Autowired
     private GlobalExceptionHandler globalExceptionHandler;
-//    @Autowired
-//    private UserService userService;
+
     private MockMvc mockMvc;
 
     @BeforeEach

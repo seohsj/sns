@@ -2,11 +2,8 @@ package com.hj.sns.comment;
 
 import com.hj.sns.comment.exception.CommentNotFoundException;
 import com.hj.sns.comment.model.Comment;
-import com.hj.sns.comment.model.CommentUser;
-import com.hj.sns.photo.repository.PhotoJpaRepository;
+//import com.hj.sns.comment.model.CommentUser;
 import com.hj.sns.photo.service.PhotoService;
-import com.hj.sns.user.User;
-import com.hj.sns.user.UserJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,22 +38,6 @@ class CommentServiceIntegrationTest {
         List<Comment> comments = photoService.findPhotoById(6L).getComments();
         assertThat(comments.size()).isEqualTo(2);
         assertTrue(comments.stream().allMatch(c -> (c.getUser().getId().equals(1L) || c.getUser().getId().equals(2L))));
-    }
-
-    @Test
-    @DisplayName("댓글 작성 시 태그된 유저가 잘 저장됐는지 확인")
-    void checkMentionedUser() {
-        Long id = commentService.writeComment(6L, 1L, "comment@userA@userB");
-        em.flush();
-        em.clear();
-        Comment newComment = commentService.findCommentById(id);
-
-        List<CommentUser> commentUsers = newComment.getCommentUsers();
-        assertThat(commentUsers.size()).isEqualTo(2);
-        for (CommentUser commentUser : commentUsers){
-            String name = commentUser.getMentionedUser().getUsername();
-            assertTrue(name.equals("userA") || name.equals("userB") );
-        }
     }
 
     @Test
