@@ -1,6 +1,5 @@
 package com.hj.sns.tag.model;
 
-import com.hj.sns.photo.model.PhotoTag;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -31,10 +30,6 @@ public class Tag {
         this.name = name;
     }
 
-
-//    public static Tag createTag(){
-//
-//    }
 
     @Override
     public boolean equals(Object o) {

@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class PhotoUser {
+public class MentionedUser {
     @Id
     @Column(name = "photo_user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +22,10 @@ public class PhotoUser {
     @JoinColumn(name = "photo_id")
     private Photo photo;
 
-    protected PhotoUser() {
+    protected MentionedUser() {
     }
 
-    public PhotoUser(User user, Photo photo) {
+    public MentionedUser(User user, Photo photo) {
         mentionedUser = user;
         this.photo = photo;
     }

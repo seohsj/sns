@@ -27,7 +27,7 @@ public class PhotoFeedDto {
         comments = p.getComments().stream().map(CommentDto::new).collect(Collectors.toList());
         createdDate = p.getCreatedDate();
         lastModifiedDate = p.getLastModifiedDate();
-        mentionedUsers = p.getPhotoUsers().stream().map(MentionedUserDto::new).collect(Collectors.toList());
+        mentionedUsers = p.getMentionedUsers().stream().map(MentionedUserDto::new).collect(Collectors.toList());
 
 
     }

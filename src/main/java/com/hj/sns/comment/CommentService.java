@@ -26,11 +26,6 @@ public class CommentService {
         User user = userService.findUserById(userId);
         Photo photo = photoService.findPhotoById(photoId);
         Comment comment = new Comment(user, content, photo);
-        List<String> userNames = comment.extractMentionedUsers();
-        for (String userName : userNames) {
-            User mentionedUser= userService.findUserByName(userName);
-            comment.addMentionedUser(mentionedUser);
-        }
         commentJpaRepository.save(comment);
         return comment.getId();
     }

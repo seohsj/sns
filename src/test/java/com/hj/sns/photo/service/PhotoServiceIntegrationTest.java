@@ -1,11 +1,11 @@
 package com.hj.sns.photo.service;
 
 import com.hj.sns.comment.CommentJpaRepository;
-import com.hj.sns.comment.CommentService;
 import com.hj.sns.follow.FollowService;
 import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.photo.model.PhotoTag;
+import com.hj.sns.tag.model.PhotoTag;
+import com.hj.sns.photo.model.MentionedUser;
 import com.hj.sns.photo.model.dto.PhotoDto;
 import com.hj.sns.photo.model.dto.PhotoFeedDto;
 import com.hj.sns.photo.repository.PhotoJpaRepository;
@@ -39,8 +39,6 @@ class PhotoServiceIntegrationTest {
     @Autowired
     private FollowService followService;
     @Autowired
-    private CommentService commentService;
-    @Autowired
     private CommentJpaRepository commentJpaRepository;
     @Autowired
     private EntityManager em;
@@ -66,8 +64,8 @@ class PhotoServiceIntegrationTest {
                 .allMatch(pt -> (
                         pt.getTag().getName().equals("tag1") || pt.getTag().getName().equals("tag2")
                 )));
-        assertThat(findPhoto.getPhotoUsers().size()).isEqualTo(1);
-        assertThat(findPhoto.getPhotoUsers().get(0).getMentionedUser().getUsername())
+        assertThat(findPhoto.getMentionedUsers().size()).isEqualTo(1);
+        assertThat(findPhoto.getMentionedUsers().get(0).getMentionedUser().getUsername())
                 .isEqualTo("userA");
 
 
@@ -78,8 +76,8 @@ class PhotoServiceIntegrationTest {
                 .allMatch(pt -> (
                         pt.getTag().getName().equals("tag1") || pt.getTag().getName().equals("tag2")
                 )));
-        assertThat(findPhoto2.getPhotoUsers().size()).isEqualTo(2);
-        assertTrue(findPhoto2.getPhotoUsers().stream()
+        assertThat(findPhoto2.getMentionedUsers().size()).isEqualTo(2);
+        assertTrue(findPhoto2.getMentionedUsers().stream()
                 .allMatch(pt -> (
                         pt.getMentionedUser().getUsername().equals("userB") || pt.getMentionedUser().getUsername().equals("userC")
                 )));
@@ -100,18 +98,21 @@ class PhotoServiceIntegrationTest {
     @DisplayName("photo content를 수정한다.")
     void updatePhotoContent() {
 
-        photoService.updatePhoto(1L, null, "#update#content@userA");
+        photoService.updatePhoto(3L, null, "#tagA#content@userA");
 
         em.flush();
         em.clear();
-        Photo photo = photoService.findPhotoById(1L);
+        Photo photo = photoService.findPhotoById(3L);
         assertThat(photo.getImagePath()).isEqualTo("imagePath");
         assertTrue(photo.getPhotoTags().stream().allMatch(pt ->
-                (pt.getTag().getName().equals("content") || pt.getTag().getName().equals("update")))
+                (pt.getTag().getName().equals("tagA") || pt.getTag().getName().equals("content")))
         );
         assertThat(photo.getPhotoTags().size()).isEqualTo(2);
-        assertThat(photo.getPhotoUsers().size()).isEqualTo(1);
-        assertThat(photo.getPhotoUsers().get(0).getMentionedUser().getUsername()).isEqualTo("userA");
+        assertThat(photo.getMentionedUsers().size()).isEqualTo(1);
+        assertThat(photo.getMentionedUsers().get(0).getMentionedUser().getUsername()).isEqualTo("userA");
+        assertThat(em.find(PhotoTag.class, 6L)).isNull();
+        assertThat(em.find(PhotoTag.class, 7L)).isNull();
+        assertThat(em.find(MentionedUser.class, 1L)).isNull();
 
     }
 
@@ -125,7 +126,7 @@ class PhotoServiceIntegrationTest {
         Photo photo = photoService.findPhotoById(1L);
         assertThat(photo.getImagePath()).isEqualTo("newImagePath");
         assertThat(photo.getPhotoTags().size()).isEqualTo(3);
-        assertThat(photo.getPhotoUsers().size()).isEqualTo(0);
+        assertThat(photo.getMentionedUsers().size()).isEqualTo(0);
 
     }
     @Test
@@ -139,7 +140,8 @@ class PhotoServiceIntegrationTest {
         assertThat(photo3.getImagePath()).isEqualTo("NewNewImagePath");
         assertThat(photo3.getContent()).isEqualTo("newContent");
         assertThat(photo3.getPhotoTags().size()).isEqualTo(0);
-        assertThat(photo3.getPhotoUsers().size()).isEqualTo(0);
+        assertThat(photo3.getMentionedUsers().size()).isEqualTo(0);
+
     }
 
 
@@ -200,6 +202,9 @@ class PhotoServiceIntegrationTest {
         assertTrue(commentJpaRepository.findById(1L).isEmpty());
         assertTrue(commentJpaRepository.findById(4L).isEmpty());
         assertTrue(commentJpaRepository.findById(5L).isEmpty());
+
         assertThat(em.find(PhotoTag.class, 1L)).isNull();
+        photoService.deletePhoto(3L);
+        assertThat(em.find(MentionedUser.class, 1L)).isNull();
     }
 }
