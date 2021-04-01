@@ -1,15 +1,16 @@
-package com.hj.sns.photo.service;
+package com.hj.sns.photo;
 
 import com.hj.sns.comment.CommentJpaRepository;
 import com.hj.sns.follow.FollowService;
+import com.hj.sns.photo.PhotoService;
 import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.tag.model.PhotoTag;
+import com.hj.sns.photoTag.model.PhotoTag;
 import com.hj.sns.photo.model.MentionedUser;
 import com.hj.sns.photo.model.dto.PhotoDto;
 import com.hj.sns.photo.model.dto.PhotoFeedDto;
-import com.hj.sns.photo.repository.PhotoJpaRepository;
-import com.hj.sns.tag.repository.TagJpaRepository;
+import com.hj.sns.photo.PhotoJpaRepository;
+import com.hj.sns.tag.TagJpaRepository;
 import com.hj.sns.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -175,7 +176,7 @@ class PhotoServiceIntegrationTest {
     void getFeedByUser() {
 
         Slice<PhotoFeedDto> photos = photoService.getUserFeed("userA", PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "id")));
-
+        System.out.println("===========================");
         assertThat(photos.getContent().size()).isEqualTo(6);
         assertThat(photos.getContent().get(0).getUsername()).isEqualTo("userC");
 

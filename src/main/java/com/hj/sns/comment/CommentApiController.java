@@ -30,11 +30,6 @@ public class CommentApiController {
         return new CommentDeleteResponse(true);
     }
 
-    @Data
-    @AllArgsConstructor
-    static class CommentCreateResponse{
-        private Long commentId;
-    }
 
     @Data
     @AllArgsConstructor
@@ -43,6 +38,13 @@ public class CommentApiController {
         @NotNull
         private Long writerId;
         private String content;
+    }
+
+
+    @Data
+    @AllArgsConstructor
+    static class CommentCreateResponse{
+        private Long commentId;
     }
 
 

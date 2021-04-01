@@ -1,13 +1,13 @@
-package com.hj.sns.photo.service;
+package com.hj.sns.photo;
 
 import com.hj.sns.follow.FollowService;
 import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.photo.model.Photo;
 import com.hj.sns.photo.model.dto.PhotoDto;
 import com.hj.sns.photo.model.dto.PhotoFeedDto;
-import com.hj.sns.photo.repository.PhotoJpaRepository;
-import com.hj.sns.tag.model.Tag;
-import com.hj.sns.tag.repository.TagJpaRepository;
+import com.hj.sns.photo.PhotoJpaRepository;
+import com.hj.sns.tag.Tag;
+import com.hj.sns.tag.TagJpaRepository;
 import com.hj.sns.user.User;
 import com.hj.sns.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

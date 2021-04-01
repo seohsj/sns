@@ -1,6 +1,6 @@
 package com.hj.sns.tag;
 
-import com.hj.sns.tag.model.dto.TagSearchDto;
+import com.hj.sns.photoTag.model.dto.TagSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

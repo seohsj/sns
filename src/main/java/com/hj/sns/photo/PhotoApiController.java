@@ -1,8 +1,7 @@
-package com.hj.sns.photo.controller;
+package com.hj.sns.photo;
 
 import com.hj.sns.photo.model.dto.PhotoDto;
 import com.hj.sns.photo.model.dto.PhotoFeedDto;
-import com.hj.sns.photo.service.PhotoService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -49,6 +48,7 @@ public class PhotoApiController {
         return  photoService.getUserFeed(username, pageable);
     }
 
+
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
@@ -59,7 +59,6 @@ public class PhotoApiController {
         private String imagePath;
         private String content;
     }
-
     @Data
     @AllArgsConstructor
     static class PhotoCreateResponse {

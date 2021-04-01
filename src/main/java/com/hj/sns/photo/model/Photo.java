@@ -2,8 +2,8 @@ package com.hj.sns.photo.model;
 
 import com.hj.sns.common.BaseTime;
 import com.hj.sns.comment.model.Comment;
-import com.hj.sns.tag.model.PhotoTag;
-import com.hj.sns.tag.model.Tag;
+import com.hj.sns.photoTag.model.PhotoTag;
+import com.hj.sns.tag.Tag;
 import com.hj.sns.user.User;
 import lombok.Getter;
 

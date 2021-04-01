@@ -1,10 +1,8 @@
-package com.hj.sns.tag.model;
+package com.hj.sns.tag;
 
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,9 +15,6 @@ public class Tag {
 
     @Column(nullable = false)
     private String name;
-
-    @OneToMany(mappedBy = "tag")
-    private List<PhotoTag> photoTags = new ArrayList<>();
 
 
     protected Tag() {

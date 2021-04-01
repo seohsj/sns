@@ -1,7 +1,7 @@
 package com.hj.sns.tag;
 
-import com.hj.sns.tag.model.dto.TagSearchDto;
-import com.hj.sns.tag.repository.PhotoTagQueryRepository;
+import com.hj.sns.photoTag.model.dto.TagSearchDto;
+import com.hj.sns.photoTag.PhotoTagJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -13,10 +13,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class TagSearchService {
 
-    private final PhotoTagQueryRepository photoTagQueryRepository;
+    private final PhotoTagJpaRepository photoTagJpaRepository;
 
     public Slice<TagSearchDto> tagSearch(String tagName, Pageable pageable){
-        return photoTagQueryRepository.findTagSearchResult(tagName, pageable);
+        return photoTagJpaRepository.findTagSearchResult(tagName, pageable).map(p->new TagSearchDto(p));
     }
 
 }
