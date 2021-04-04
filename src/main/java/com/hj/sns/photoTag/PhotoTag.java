@@ -1,4 +1,4 @@
-package com.hj.sns.tag.model;
+package com.hj.sns.photoTag;
 
 import com.hj.sns.photo.model.Photo;
 import com.hj.sns.tag.model.Tag;

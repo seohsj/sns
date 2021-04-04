@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,13 +42,14 @@ class UserApiControllerTest {
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)))
+                .andDo(print())
                 .andExpect(status().isCreated());
+
     }
 
     @DisplayName("중복된 이름(UserAlreadyExistException)으로 회원가입 실패")
     @Test
     void joinFail() throws Exception {
-//        userService.save(new User("userA","password"));
         UserApiController.UserJoinRequest request = new UserApiController.UserJoinRequest("userA", "password");
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/api/users")

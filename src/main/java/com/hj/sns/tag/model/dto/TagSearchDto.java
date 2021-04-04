@@ -1,6 +1,6 @@
 package com.hj.sns.tag.model.dto;
 
-import com.hj.sns.tag.model.PhotoTag;
+import com.hj.sns.photoTag.PhotoTag;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -8,18 +8,19 @@ import java.time.LocalDateTime;
 @Data
 public class TagSearchDto {
     private Long photoId;
+
     private String imagePath;
     private String content;
-    private String upLoaderName;
+    private String uploaderName;
     private LocalDateTime createdDate;
     private LocalDateTime lastModifiedDate;
 
-    public TagSearchDto(Long photoId, String imagePath, String content, String upLoaderName, LocalDateTime createdDate, LocalDateTime lastModifiedDate) {
-        this.photoId = photoId;
-        this.imagePath = imagePath;
-        this.content = content;
-        this.upLoaderName = upLoaderName;
-        this.createdDate = createdDate;
-        this.lastModifiedDate = lastModifiedDate;
+    public TagSearchDto(PhotoTag p) {
+        this.photoId = p.getPhoto().getId();
+        this.imagePath = p.getPhoto().getImagePath();
+        this.content = p.getPhoto().getContent();
+        this.uploaderName = p.getPhoto().getUser().getUsername();
+        this.createdDate = p.getPhoto().getCreatedDate();
+        this.lastModifiedDate = p.getPhoto().getLastModifiedDate();
     }
 }

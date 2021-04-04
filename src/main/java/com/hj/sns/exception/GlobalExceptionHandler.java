@@ -8,7 +8,6 @@ import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.user.exception.UserAlreadyExistException;
 import com.hj.sns.user.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -52,4 +51,5 @@ public class GlobalExceptionHandler {
     public ErrorResponse commentNotFoundException(CommentNotFoundException e){
         return ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), e.getMessage());
     }
+
 }

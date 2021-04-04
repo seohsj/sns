@@ -3,14 +3,12 @@ package com.hj.sns.comment;
 import com.hj.sns.comment.exception.CommentNotFoundException;
 import com.hj.sns.comment.model.Comment;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.photo.service.PhotoService;
+import com.hj.sns.photo.PhotoService;
 import com.hj.sns.user.User;
 import com.hj.sns.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

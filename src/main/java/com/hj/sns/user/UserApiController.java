@@ -28,15 +28,6 @@ public class UserApiController {
 
 
     @Data
-    static class UserJoinResponse {
-        private Long id;
-
-        UserJoinResponse(Long id) {
-            this.id = id;
-        }
-    }
-
-    @Data
     @AllArgsConstructor
     @NoArgsConstructor
     static class UserJoinRequest {
@@ -48,17 +39,12 @@ public class UserApiController {
     }
 
     @Data
-    static class UserSearchResponse {
-        private String username;
-        private List<PhotoSummaryDto> photos=new ArrayList<>();
-
+    static class UserJoinResponse {
+        private Long id;
+        UserJoinResponse(Long id) {
+            this.id = id;
+        }
     }
 
-    @Data
-    static class PhotoSummaryDto{
-        private Long photoId;
-        private String imagePath;
-
-    }
 
 }

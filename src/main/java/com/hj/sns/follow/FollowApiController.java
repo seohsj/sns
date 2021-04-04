@@ -21,7 +21,7 @@ import javax.validation.constraints.NotNull;
 public class FollowApiController {
     private final FollowService followService;
 
-    //
+
     @GetMapping("/api/{username}/followings")
     public Slice<FollowingDto> followingList(@PathVariable("username") String username, Pageable pageable) {
         return followService.findFollowingsPaging(username, pageable);

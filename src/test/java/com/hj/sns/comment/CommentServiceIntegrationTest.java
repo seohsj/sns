@@ -3,7 +3,7 @@ package com.hj.sns.comment;
 import com.hj.sns.comment.exception.CommentNotFoundException;
 import com.hj.sns.comment.model.Comment;
 //import com.hj.sns.comment.model.CommentUser;
-import com.hj.sns.photo.service.PhotoService;
+import com.hj.sns.photo.PhotoService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

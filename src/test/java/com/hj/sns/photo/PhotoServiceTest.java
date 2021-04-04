@@ -1,8 +1,9 @@
-package com.hj.sns.photo.service;
+package com.hj.sns.photo;
 
+import com.hj.sns.photo.PhotoService;
 import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.photo.repository.PhotoJpaRepository;
+import com.hj.sns.photo.PhotoJpaRepository;
 import com.hj.sns.user.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

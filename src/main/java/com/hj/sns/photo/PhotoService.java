@@ -1,13 +1,13 @@
-package com.hj.sns.photo.service;
+package com.hj.sns.photo;
 
 import com.hj.sns.follow.FollowService;
 import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.photo.model.Photo;
 import com.hj.sns.photo.model.dto.PhotoDto;
 import com.hj.sns.photo.model.dto.PhotoFeedDto;
-import com.hj.sns.photo.repository.PhotoJpaRepository;
+import com.hj.sns.photoTag.PhotoTagJpaRepository;
 import com.hj.sns.tag.model.Tag;
-import com.hj.sns.tag.repository.TagJpaRepository;
+import com.hj.sns.tag.TagJpaRepository;
 import com.hj.sns.user.User;
 import com.hj.sns.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +28,7 @@ public class PhotoService {
     private final UserService userService;
     private final TagJpaRepository tagJpaRepository;
     private final FollowService followService;
-
+    private final PhotoTagJpaRepository photoTagJpaRepository;
     @Transactional
     public Long save(Long userId, String imagePath, String content) {
         User user = userService.findUserById(userId);
@@ -53,12 +52,17 @@ public class PhotoService {
             photo.updateImagePath(imagePath);
         }
         if (content != null) {
+            //연관된 태그 조회
+            List<Long> tagIds = photoTagJpaRepository.findPhotoTagByPhoto(photo)
+                    .stream().map(pt -> pt.getTag().getId()).collect(Collectors.toList());
+
             photo.updateContent(content);
             List<Tag> tags = extractTags(photo);
             photo.updatePhotoTags(tags);
 
             List<User> users = extractMentionedUsers(photo);
             photo.updateMentionedUsers(users);
+            deleteOrphanTags(tagIds);
 
         }
         return photo.getId();
@@ -68,7 +72,17 @@ public class PhotoService {
     @Transactional
     public void deletePhoto(Long photoId) {
         Photo photo = findPhotoById(photoId);
+        //연관된 태그 조회
+        List<Long> tagIds = photoTagJpaRepository.findPhotoTagByPhoto(photo)
+                .stream().map(pt -> pt.getTag().getId()).collect(Collectors.toList());
+
+        //photo 삭제
         photoJpaRepository.delete(photo);
+
+        //태그 중에서 photo 수가 0인 것을 삭제
+        deleteOrphanTags(tagIds);
+
+
     }
 
     public Photo findPhotoById(Long id) {
@@ -120,6 +134,13 @@ public class PhotoService {
                 .distinct()
                 .collect(Collectors.toList());
 
+    }
+
+    private void deleteOrphanTags(List<Long> tagIds){
+        List<Long> ids = tagJpaRepository.getOrphanTagId(tagIds);
+        for (Long id : ids) {
+            tagJpaRepository.deleteById(id);
+        }
     }
 
 

@@ -9,7 +9,6 @@ import com.hj.sns.user.User;
 import com.hj.sns.user.UserService;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -54,7 +53,6 @@ public class FollowService {
                 });
         //그렇지 않다면 who가 whom을 follow하도록
         followJpaRepository.save(new Follow(who, whom));
-        /*ToDo: push*/
 
     }
 

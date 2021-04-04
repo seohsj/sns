@@ -1,15 +1,14 @@
-package com.hj.sns.photo.service;
+package com.hj.sns.photo;
 
 import com.hj.sns.comment.CommentJpaRepository;
 import com.hj.sns.follow.FollowService;
 import com.hj.sns.photo.exception.PhotoNotFoundException;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.tag.model.PhotoTag;
+import com.hj.sns.photoTag.PhotoTag;
 import com.hj.sns.photo.model.MentionedUser;
 import com.hj.sns.photo.model.dto.PhotoDto;
 import com.hj.sns.photo.model.dto.PhotoFeedDto;
-import com.hj.sns.photo.repository.PhotoJpaRepository;
-import com.hj.sns.tag.repository.TagJpaRepository;
+import com.hj.sns.tag.TagJpaRepository;
 import com.hj.sns.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -136,12 +135,24 @@ class PhotoServiceIntegrationTest {
         photoService.updatePhoto(1L, "NewNewImagePath", "newContent");
         em.flush();
         em.clear();
-        Photo photo3 = photoService.findPhotoById(1L);
-        assertThat(photo3.getImagePath()).isEqualTo("NewNewImagePath");
-        assertThat(photo3.getContent()).isEqualTo("newContent");
-        assertThat(photo3.getPhotoTags().size()).isEqualTo(0);
-        assertThat(photo3.getMentionedUsers().size()).isEqualTo(0);
-
+        Photo photo = photoService.findPhotoById(1L);
+        assertThat(photo.getImagePath()).isEqualTo("NewNewImagePath");
+        assertThat(photo.getContent()).isEqualTo("newContent");
+        assertThat(photo.getPhotoTags().size()).isEqualTo(0);
+        assertThat(photo.getMentionedUsers().size()).isEqualTo(0);
+        assertFalse(tagJpaRepository.findById(1L).isEmpty());
+        assertFalse(tagJpaRepository.findById(2L).isEmpty());
+        assertFalse(tagJpaRepository.findById(3L).isEmpty());
+        
+        
+        //연관된 태그가 orphan 객체가 되면 지워지는지 확인
+        photoService.updatePhoto(7L, "NewNewImagePath", "newContent");
+        em.flush();
+        em.clear();
+        assertFalse(tagJpaRepository.findById(1L).isEmpty());
+        assertFalse(tagJpaRepository.findById(2L).isEmpty());
+        assertFalse(tagJpaRepository.findById(5L).isEmpty());
+        assertTrue(tagJpaRepository.findById(7L).isEmpty());
     }
 
 
@@ -175,7 +186,7 @@ class PhotoServiceIntegrationTest {
     void getFeedByUser() {
 
         Slice<PhotoFeedDto> photos = photoService.getUserFeed("userA", PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "id")));
-
+        System.out.println("===========================");
         assertThat(photos.getContent().size()).isEqualTo(6);
         assertThat(photos.getContent().get(0).getUsername()).isEqualTo("userC");
 
@@ -197,14 +208,26 @@ class PhotoServiceIntegrationTest {
     @DisplayName("photo를 삭제한다.")
     void deletePhoto() {
 
-        photoService.deletePhoto(1L);
-        assertThrows(PhotoNotFoundException.class, () -> photoService.findPhotoById(1L));
-        assertTrue(commentJpaRepository.findById(1L).isEmpty());
-        assertTrue(commentJpaRepository.findById(4L).isEmpty());
-        assertTrue(commentJpaRepository.findById(5L).isEmpty());
+        photoService.deletePhoto(7L);
+        em.flush();
+        em.clear();
+        System.out.println("-==========================");
+        assertThrows(PhotoNotFoundException.class, () -> photoService.findPhotoById(7L));
+        assertTrue(commentJpaRepository.findById(8L).isEmpty());
+        assertTrue(commentJpaRepository.findById(9L).isEmpty());
+        assertFalse(tagJpaRepository.findById(1L).isEmpty());
+        assertFalse(tagJpaRepository.findById(2L).isEmpty());
+        assertFalse(tagJpaRepository.findById(5L).isEmpty());
+        assertTrue(tagJpaRepository.findById(7L).isEmpty());
 
-        assertThat(em.find(PhotoTag.class, 1L)).isNull();
+        assertThat(em.find(PhotoTag.class, 11L)).isNull();
+        assertThat(em.find(PhotoTag.class, 12L)).isNull();
+        assertThat(em.find(PhotoTag.class, 13L)).isNull();
+        assertThat(em.find(PhotoTag.class, 14L)).isNull();
+
         photoService.deletePhoto(3L);
+        em.flush();
+        em.clear();
         assertThat(em.find(MentionedUser.class, 1L)).isNull();
     }
 }
