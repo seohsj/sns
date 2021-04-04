@@ -1,7 +1,7 @@
-package com.hj.sns.photoTag.model;
+package com.hj.sns.photoTag;
 
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.tag.Tag;
+import com.hj.sns.tag.model.Tag;
 import lombok.Getter;
 
 import javax.persistence.*;

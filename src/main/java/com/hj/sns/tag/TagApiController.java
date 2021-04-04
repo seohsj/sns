@@ -1,6 +1,7 @@
 package com.hj.sns.tag;
 
-import com.hj.sns.photoTag.model.dto.TagSearchDto;
+import com.hj.sns.tag.model.dto.TagNameSearchDto;
+import com.hj.sns.tag.model.dto.TagSearchDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -13,9 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class TagApiController {
     private final TagSearchService tagSearchService;
 
-    @GetMapping("/api/tags/{name}")
-    public  Slice<TagSearchDto> tagSearch(@PathVariable("name")String name, Pageable pageable){
-        return tagSearchService.tagSearch(name, pageable);
+    @GetMapping("/api/tags/{name}/photos")
+    public Slice<TagSearchDto> findPhotoByTag(@PathVariable("name") String name, Pageable pageable) {
+        return tagSearchService.findPhotoByTag(name, pageable);
+    }
+    @GetMapping("/api/tags/{searchWord}")
+    public Slice<TagNameSearchDto> searchTag(@PathVariable("searchWord") String name, Pageable pageable) {
+        return tagSearchService.searchTag(name, pageable);
     }
 
 }

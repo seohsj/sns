@@ -1,6 +1,6 @@
-package com.hj.sns.photoTag.model.dto;
+package com.hj.sns.tag.model.dto;
 
-import com.hj.sns.photoTag.model.PhotoTag;
+import com.hj.sns.photoTag.PhotoTag;
 import lombok.Data;
 
 import java.time.LocalDateTime;
