@@ -1,6 +1,6 @@
 package com.hj.sns.photo.model;
 
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -4,7 +4,7 @@ import com.hj.sns.common.BaseTime;
 import com.hj.sns.comment.model.Comment;
 import com.hj.sns.photoTag.PhotoTag;
 import com.hj.sns.tag.model.Tag;
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -40,7 +40,7 @@ public class Photo extends BaseTime {
 
 
     @OneToMany(mappedBy="photo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MentionedUser> MentionedUsers = new ArrayList<>();
+    private List<MentionedUser> mentionedUsers = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "photo", cascade= CascadeType.ALL)
@@ -85,12 +85,12 @@ public class Photo extends BaseTime {
     public void addMentionedUsers(List<User> users) {
         for(User user: users){
             MentionedUser mentionedUser = new MentionedUser(user, this);
-            MentionedUsers.add(mentionedUser);
+            mentionedUsers.add(mentionedUser);
         }
 
     }
     public void updateMentionedUsers(List<User> users) {
-        MentionedUsers.clear();
+        mentionedUsers.clear();
         addMentionedUsers(users);
 
     }

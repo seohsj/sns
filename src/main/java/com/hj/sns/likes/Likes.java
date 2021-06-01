@@ -1,7 +1,7 @@
 package com.hj.sns.likes;
 
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 
 import javax.persistence.*;
 

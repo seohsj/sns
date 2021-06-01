@@ -1,6 +1,6 @@
-package com.hj.sns.follow;
+package com.hj.sns.follow.model;
 
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 import lombok.Getter;
 
 import javax.persistence.*;

@@ -2,14 +2,10 @@ package com.hj.sns.comment.model;
 
 import com.hj.sns.common.BaseTime;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 import lombok.Getter;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Entity
 @Getter

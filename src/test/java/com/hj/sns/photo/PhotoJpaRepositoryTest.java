@@ -1,8 +1,7 @@
 package com.hj.sns.photo;
 
-import com.hj.sns.photo.PhotoJpaRepository;
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 import com.hj.sns.user.UserJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

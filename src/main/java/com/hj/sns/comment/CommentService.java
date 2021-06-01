@@ -4,7 +4,7 @@ import com.hj.sns.comment.exception.CommentNotFoundException;
 import com.hj.sns.comment.model.Comment;
 import com.hj.sns.photo.model.Photo;
 import com.hj.sns.photo.PhotoService;
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 import com.hj.sns.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

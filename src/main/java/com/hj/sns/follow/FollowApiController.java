@@ -1,16 +1,14 @@
 package com.hj.sns.follow;
 
-import com.hj.sns.follow.dto.FollowerDto;
-import com.hj.sns.follow.dto.FollowingDto;
+import com.hj.sns.follow.model.dto.FollowerDto;
+import com.hj.sns.follow.model.dto.FollowingDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

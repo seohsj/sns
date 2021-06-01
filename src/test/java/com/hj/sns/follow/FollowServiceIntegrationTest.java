@@ -1,23 +1,21 @@
 package com.hj.sns.follow;
 
-import com.hj.sns.follow.dto.FollowerDto;
-import com.hj.sns.follow.dto.FollowingDto;
+import com.hj.sns.follow.model.dto.FollowerDto;
+import com.hj.sns.follow.model.dto.FollowingDto;
 import com.hj.sns.follow.exception.FollowAlreadyExistException;
 
 import com.hj.sns.follow.exception.FollowNotFoundException;
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 import com.hj.sns.user.UserJpaRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

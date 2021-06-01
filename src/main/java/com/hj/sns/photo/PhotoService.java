@@ -8,7 +8,7 @@ import com.hj.sns.photo.model.dto.PhotoFeedDto;
 import com.hj.sns.photoTag.PhotoTagJpaRepository;
 import com.hj.sns.tag.model.Tag;
 import com.hj.sns.tag.TagJpaRepository;
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 import com.hj.sns.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

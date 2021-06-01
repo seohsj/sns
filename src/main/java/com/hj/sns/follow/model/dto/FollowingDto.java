@@ -1,6 +1,6 @@
-package com.hj.sns.follow.dto;
+package com.hj.sns.follow.model.dto;
 
-import com.hj.sns.follow.Follow;
+import com.hj.sns.follow.model.Follow;
 import lombok.Data;
 
 @Data

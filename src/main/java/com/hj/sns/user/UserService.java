@@ -2,6 +2,7 @@ package com.hj.sns.user;
 
 import com.hj.sns.user.exception.UserAlreadyExistException;
 import com.hj.sns.user.exception.UserNotFoundException;
+import com.hj.sns.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,6 @@ public class UserService {
         return userJpaRepository.findByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
     }
-
 
     private void validateDuplicateUserName(String name) {
         Optional<User> user = userJpaRepository.findByUsername(name);

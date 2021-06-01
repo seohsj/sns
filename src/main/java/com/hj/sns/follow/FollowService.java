@@ -1,11 +1,12 @@
 package com.hj.sns.follow;
 
-import com.hj.sns.follow.dto.FollowerDto;
-import com.hj.sns.follow.dto.FollowingDto;
+import com.hj.sns.follow.model.dto.FollowerDto;
+import com.hj.sns.follow.model.dto.FollowingDto;
 import com.hj.sns.follow.exception.FollowAlreadyExistException;
 
 import com.hj.sns.follow.exception.FollowNotFoundException;
-import com.hj.sns.user.User;
+import com.hj.sns.follow.model.Follow;
+import com.hj.sns.user.model.User;
 import com.hj.sns.user.UserService;
 import lombok.RequiredArgsConstructor;
 

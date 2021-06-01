@@ -1,7 +1,7 @@
 package com.hj.sns.photo;
 
 import com.hj.sns.photo.model.Photo;
-import com.hj.sns.user.User;
+import com.hj.sns.user.model.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
